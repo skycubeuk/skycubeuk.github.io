@@ -1,0 +1,72 @@
+---
+interface Props {
+  date: Date;
+  icon?: string;
+  title?: string;
+  excerpt: string;
+  slug: string;
+  displayimage?: { src: string; alt: string };
+  shortnews?: boolean;
+}
+
+const { date, icon = 'newspaper', title, excerpt, slug, displayimage, shortnews } = Astro.props;
+
+const iconMap: Record<string, string> = {
+  'newspaper': '📰',
+  'graduation-cap': '🎓',
+  'flask': '🧪',
+  'person-chalkboard': '🏛️',
+  'id-badge': '👤',
+  'bullhorn': '📢',
+  'microscope': '🔬',
+  'plane': '✈️',
+  'fa-solid fa-flask': '🧪',
+};
+const emoji = iconMap[icon] ?? '📰';
+const formattedDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+---
+
+<li class="group">
+  {displayimage ? (
+    <div class="flex flex-col sm:flex-row gap-4 py-5 border-b border-gray-100">
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-2">
+          <span aria-hidden="true" class="text-lg">{emoji}</span>
+          <time datetime={date.toISOString()} class="text-xs text-gray-400">{formattedDate}</time>
+        </div>
+        {!shortnews && title && (
+          <h3 class="font-semibold text-gray-900 mb-1">
+            <a href={`/posts/${slug}`} class="hover:text-[#552d62] transition-colors">{title}</a>
+          </h3>
+        )}
+        <p class="text-sm text-gray-700 leading-relaxed" set:html={excerpt} />
+        {!shortnews && (
+          <a href={`/posts/${slug}`} class="text-xs text-[#552d62] hover:underline mt-2 inline-block">Read more →</a>
+        )}
+      </div>
+      <img
+        src={displayimage.src}
+        alt={displayimage.alt}
+        class="sm:w-40 w-full sm:h-28 h-40 object-cover rounded-xl flex-shrink-0"
+      />
+    </div>
+  ) : (
+    <div class="py-4 border-b border-gray-100">
+      <div class="flex items-start gap-3">
+        <span aria-hidden="true" class="text-lg mt-0.5 flex-shrink-0">{emoji}</span>
+        <div class="flex-1 min-w-0">
+          <time datetime={date.toISOString()} class="text-xs text-gray-400 block mb-1">{formattedDate}</time>
+          {!shortnews && title && (
+            <h3 class="font-semibold text-gray-900 mb-1">
+              <a href={`/posts/${slug}`} class="hover:text-[#552d62] transition-colors">{title}</a>
+            </h3>
+          )}
+          <p class="text-sm text-gray-700 leading-relaxed" set:html={excerpt} />
+          {!shortnews && (
+            <a href={`/posts/${slug}`} class="text-xs text-[#552d62] hover:underline mt-1 inline-block">Read more →</a>
+          )}
+        </div>
+      </div>
+    </div>
+  )}
+</li>

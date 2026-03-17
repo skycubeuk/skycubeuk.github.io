@@ -1,0 +1,149 @@
+backend:
+  name: github
+  repo: wychowlab/wychowlab-web-v2
+  branch: main
+  base_url: https://sveltia-cms-auth.vercel.app  # Free OAuth proxy for GitHub Pages
+
+media_folder: public/img/uploads
+public_folder: /img/uploads
+
+site_url: https://www.wychowlab.org
+display_url: https://www.wychowlab.org
+logo_url: https://www.wychowlab.org/img/logo.png
+
+collections:
+  # ── SETTINGS ──────────────────────────────────────────
+  - name: settings
+    label: "Site Settings"
+    files:
+      - name: general
+        label: "General Settings"
+        file: src/content/settings/general.yaml
+        fields:
+          - { label: "Site Title", name: title, widget: string }
+          - { label: "Tagline", name: tagline, widget: string }
+          - { label: "Description", name: description, widget: text }
+          - { label: "Twitter Handle", name: twitter, widget: string }
+          - { label: "GitHub Handle", name: github, widget: string }
+          - { label: "ORCID", name: orcid, widget: string, required: false }
+
+  # ── POSTS (NEWS) ──────────────────────────────────────
+  - name: posts
+    label: "News Posts"
+    label_singular: "News Post"
+    folder: src/content/posts
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: title, widget: string, required: false,
+          hint: "Leave blank for short news items with no heading." }
+      - { label: "Date", name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "DD MMMM YYYY", time_format: false }
+      - { label: "Short news (no heading)?", name: shortnews, widget: boolean, default: true }
+      - label: "Icon"
+        name: icon
+        widget: select
+        default: "newspaper"
+        options:
+          - { label: "📰 News / Default", value: "newspaper" }
+          - { label: "🎓 Graduation / Award", value: "graduation-cap" }
+          - { label: "🧪 Lab / Experiment", value: "flask" }
+          - { label: "🏛️ Talk / Conference", value: "person-chalkboard" }
+          - { label: "👤 Person / Join", value: "id-badge" }
+          - { label: "📢 Job alert", value: "bullhorn" }
+          - { label: "🔬 Research", value: "microscope" }
+          - { label: "✈️ Travel", value: "plane" }
+      - label: "Display Image"
+        name: displayimage
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { label: "Image", name: src, widget: image, required: false }
+          - { label: "Alt text", name: alt, widget: string, required: false }
+      - { label: "Content", name: body, widget: markdown }
+
+  # ── PROJECTS ──────────────────────────────────────────
+  - name: projects
+    label: "Research Projects"
+    label_singular: "Research Project"
+    folder: src/content/projects
+    create: true
+    fields:
+      - { label: "Title", name: title, widget: string }
+      - { label: "Short Description", name: excerpt, widget: text,
+          hint: "1-2 sentences shown on the project card." }
+      - { label: "Full Description", name: body, widget: markdown }
+      - label: "Status"
+        name: status
+        widget: select
+        default: active
+        options:
+          - { label: "Active", value: active }
+          - { label: "Inactive", value: inactive }
+      - { label: "Start Date", name: date, widget: datetime, format: "YYYY-MM-DD", date_format: "DD MMMM YYYY", time_format: false }
+      - { label: "Last Updated", name: lastUpdated, widget: datetime, format: "YYYY-MM-DD", date_format: "DD MMMM YYYY", time_format: false }
+      - label: "People (person IDs)"
+        name: people
+        widget: list
+        field: { label: "Person ID", name: id, widget: string,
+                  hint: "Use the person's ID from the People collection, e.g. 'ying' or 'phd2022_ananya'" }
+
+  # ── PEOPLE ────────────────────────────────────────────
+  - name: people
+    label: "People"
+    label_singular: "Person"
+    folder: src/content/people
+    create: true
+    identifier_field: displayName
+    fields:
+      - { label: "ID (slug)", name: id, widget: string,
+          hint: "Short unique identifier, e.g. 'ying' or 'phd2022_ananya'. Used in projects to link people." }
+      - { label: "Display Name", name: displayName, widget: string }
+      - label: "Role"
+        name: role
+        widget: select
+        options:
+          - { label: "Faculty", value: faculty }
+          - { label: "Postdoc", value: postdoc }
+          - { label: "PhD / Research Student", value: student }
+          - { label: "Collaborator", value: collab }
+          - { label: "Undergraduate Alumnus", value: ugrad-alum }
+          - { label: "Alumni", value: alum }
+      - { label: "Department / Institution", name: bio, widget: string, required: false,
+          hint: "Short one-liner, e.g. 'Department of Physics, University of Warwick'" }
+      - { label: "Long Bio", name: bioLong, widget: text, required: false,
+          hint: "Full biography paragraph (shown on the People page for faculty)." }
+      - { label: "Profile Photo", name: image, widget: image, required: false }
+      - { label: "Website / Profile URL", name: webpage, widget: string, required: false }
+      - { label: "Twitter Handle", name: twitter, widget: string, required: false,
+          hint: "Without @, e.g. wingyingchow" }
+      - { label: "Mastodon URL", name: mastodon, widget: string, required: false }
+      - { label: "ORCID", name: orcid, widget: string, required: false }
+      - { label: "GitHub Handle", name: github, widget: string, required: false }
+      - { label: "LinkedIn URL", name: linkedin, widget: string, required: false }
+      - { label: "After leaving (alumni)", name: nextRole, widget: string, required: false,
+          hint: "e.g. '> Consultancy'" }
+      - { label: "Sort order (lower = first)", name: order, widget: number, default: 99, required: false }
+
+  # ── PUBLICATIONS ──────────────────────────────────────
+  - name: publications
+    label: "Publications"
+    label_singular: "Publication"
+    folder: src/content/publications
+    create: true
+    identifier_field: title
+    fields:
+      - { label: "Title", name: title, widget: string }
+      - { label: "Authors", name: authors, widget: string,
+          hint: "Full author list as it appears in the journal." }
+      - { label: "Journal", name: journal, widget: string }
+      - { label: "Year", name: year, widget: number }
+      - { label: "DOI", name: doi, widget: string, required: false,
+          hint: "Just the DOI, e.g. 10.1002/anie.202015215" }
+      - { label: "URL", name: url, widget: string, required: false }
+      - { label: "Abstract", name: abstract, widget: text, required: false }
+      - { label: "Volume", name: volume, widget: string, required: false }
+      - { label: "Pages", name: pages, widget: string, required: false }
+      - { label: "Journal Cover?", name: isCover, widget: boolean, default: false }
+      - { label: "Cover Image", name: coverImage, widget: image, required: false }
+      - { label: "Cover Thumbnail", name: coverThumb, widget: image, required: false }

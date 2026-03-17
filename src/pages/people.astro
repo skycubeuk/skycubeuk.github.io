@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PersonCard from '../components/PersonCard.astro';
+
+const allPeople = (await getCollection('people')).sort((a, b) => a.data.order - b.data.order);
+
+const faculty   = allPeople.filter(p => p.data.role === 'faculty');
+const students  = allPeople.filter(p => p.data.role === 'student');
+const collabs   = allPeople.filter(p => p.data.role === 'collab');
+const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.role));
+---
+
+<Base title="People | WY Chow Lab" description="Meet the people of the WY Chow Lab at the University of Warwick.">
+  <div class="max-w-5xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">People</h1>
+    <p class="text-gray-500 mb-10">The team behind WY Chow Lab's research.</p>
+
+    <!-- Faculty -->
+    <section class="mb-12">
+      {faculty.map(p => (
+        <PersonCard
+          name={p.data.displayName}
+          role={p.data.role}
+          bio={p.data.bio}
+          bioLong={p.data.bioLong}
+          image={p.data.image}
+          webpage={p.data.webpage}
+          twitter={p.data.twitter}
+          mastodon={p.data.mastodon}
+          orcid={p.data.orcid}
+          github={p.data.github}
+          variant="full"
+        />
+      ))}
+    </section>
+
+    <!-- Students -->
+    <section class="mb-12">
+      <h2 class="text-xl font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Research Students</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+        {students.map(p => (
+          <PersonCard
+            name={p.data.displayName}
+            role={p.data.role}
+            bio={p.data.bio}
+            image={p.data.image}
+            webpage={p.data.webpage}
+            variant="card"
+          />
+        ))}
+        <div class="flex flex-col items-center text-center gap-2">
+          <a href="/join" class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-gray-400 hover:bg-[#552d62] hover:text-white transition-colors ring-2 ring-gray-100">?</a>
+          <div>
+            <p class="text-sm font-medium text-gray-500">
+              <a href="/join" class="hover:text-[#552d62]">You?</a>
+            </p>
+            <p class="text-xs text-gray-400">See the Join page!</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Collaborators + Alumni -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-10">
+      <section>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Collaborators</h2>
+        <ul class="space-y-2">
+          {collabs.map(p => (
+            <li class="text-sm">
+              {p.data.webpage
+                ? <a href={p.data.webpage} class="font-medium text-[#552d62] hover:underline">{p.data.displayName}</a>
+                : <span class="font-medium text-gray-800">{p.data.displayName}</span>
+              }
+              {p.data.bio && <span class="text-gray-500"> — {p.data.bio}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section>
+        <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Alumni</h2>
+        <ul class="space-y-1.5">
+          {alumni.map(p => (
+            <li class="text-sm">
+              {p.data.webpage
+                ? <a href={p.data.webpage} class="text-gray-700 hover:text-[#552d62]">{p.data.displayName}</a>
+                : <span class="text-gray-700">{p.data.displayName}</span>
+              }
+              {p.data.nextRole && <span class="text-gray-400"> → {p.data.nextRole}</span>}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
+  </div>
+</Base>

@@ -1,0 +1,189 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import NewsItem from '../components/NewsItem.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import PersonCard from '../components/PersonCard.astro';
+
+// Load data
+const allPosts = (await getCollection('posts')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
+const recentPosts = allPosts.slice(0, 5);
+
+const allProjects = (await getCollection('projects'))
+  .filter(p => p.data.status === 'active')
+  .sort((a, b) => b.data.lastUpdated.getTime() - a.data.lastUpdated.getTime());
+
+const allPeople = (await getCollection('people')).sort((a, b) => a.data.order - b.data.order);
+const peopleById = Object.fromEntries(allPeople.map(p => [p.data.id, p.data]));
+
+const faculty   = allPeople.filter(p => p.data.role === 'faculty');
+const students  = allPeople.filter(p => p.data.role === 'student');
+const collabs   = allPeople.filter(p => p.data.role === 'collab');
+const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.role));
+---
+
+<Base>
+  <!-- Hero -->
+  <section class="bg-gradient-to-br from-[#552d62] to-[#3f1f4a] text-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-20">
+      <div class="max-w-2xl">
+        <p class="text-purple-200 text-sm font-semibold uppercase tracking-widest mb-4">
+          Department of Physics · University of Warwick
+        </p>
+        <h1 class="text-4xl sm:text-5xl font-bold leading-tight mb-6">
+          Using magnetic resonance to deliver new insight to human health and disease.
+        </h1>
+        <p class="text-purple-100 text-lg leading-relaxed">
+          We use solid-state NMR spectroscopy to study biomolecules in the extracellular matrix
+          at atomic resolution — revealing structural details relevant to disease and ageing.
+        </p>
+        <div class="flex flex-wrap gap-3 mt-8">
+          <a href="/research" class="px-5 py-2.5 bg-white text-[#552d62] font-semibold rounded-full hover:bg-purple-50 transition-colors text-sm">
+            Our Research
+          </a>
+          <a href="/join" class="px-5 py-2.5 border border-white/50 text-white font-semibold rounded-full hover:bg-white/10 transition-colors text-sm">
+            Join the Lab
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+    <!-- News + Research two-column -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 py-14">
+
+      <!-- News (left, narrower) -->
+      <section class="lg:col-span-2">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-gray-900">News</h2>
+          <a href="/posts" class="text-sm text-[#552d62] hover:underline">All posts →</a>
+        </div>
+        <ul class="divide-y divide-gray-100">
+          {recentPosts.map(post => (
+            <NewsItem
+              date={post.data.date}
+              icon={post.data.icon}
+              title={post.data.title}
+              excerpt={post.body?.slice(0, 200).replace(/---[\s\S]*?---/, '').trim() ?? ''}
+              slug={post.slug}
+              displayimage={post.data.displayimage}
+              shortnews={post.data.shortnews}
+            />
+          ))}
+        </ul>
+      </section>
+
+      <!-- Research (right, wider) -->
+      <section class="lg:col-span-3">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-gray-900">Research</h2>
+          <a href="/research" class="text-sm text-[#552d62] hover:underline">All projects →</a>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {allProjects.map(project => {
+            const projectPeople = project.data.people
+              .map((id: string) => peopleById[id])
+              .filter(Boolean);
+            return (
+              <ProjectCard
+                title={project.data.title}
+                excerpt={project.data.excerpt}
+                slug={project.slug}
+                status={project.data.status}
+                people={projectPeople}
+                lastUpdated={project.data.lastUpdated}
+              />
+            );
+          })}
+        </div>
+      </section>
+    </div>
+
+    <!-- People -->
+    <section id="people" class="py-14 border-t border-gray-100">
+      <h2 class="text-2xl font-bold text-gray-900 mb-8">People</h2>
+
+      <!-- Faculty -->
+      <div class="mb-10">
+        {faculty.map(p => (
+          <PersonCard
+            name={p.data.displayName}
+            role={p.data.role}
+            bio={p.data.bio}
+            bioLong={p.data.bioLong}
+            image={p.data.image}
+            webpage={p.data.webpage}
+            twitter={p.data.twitter}
+            mastodon={p.data.mastodon}
+            orcid={p.data.orcid}
+            github={p.data.github}
+            variant="full"
+          />
+        ))}
+      </div>
+
+      <!-- Students -->
+      <div class="mb-10">
+        <h3 class="text-lg font-semibold text-gray-700 mb-4">Research Students</h3>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+          {students.map(p => (
+            <PersonCard
+              name={p.data.displayName}
+              role={p.data.role}
+              bio={p.data.bio}
+              image={p.data.image}
+              webpage={p.data.webpage}
+              variant="card"
+            />
+          ))}
+          <!-- You? placeholder -->
+          <div class="flex flex-col items-center text-center gap-2">
+            <a href="/join" class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-gray-400 hover:bg-[#552d62] hover:text-white transition-colors ring-2 ring-gray-100">?</a>
+            <div>
+              <p class="text-sm font-medium text-gray-500">
+                <a href="/join" class="hover:text-[#552d62]">You?</a>
+              </p>
+              <p class="text-xs text-gray-400">See the Join page!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collaborators + Alumni -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-lg font-semibold text-gray-700 mb-3">Collaborators</h3>
+          <ul class="space-y-2">
+            {collabs.map(p => (
+              <li class="text-sm">
+                {p.data.webpage
+                  ? <a href={p.data.webpage} class="font-medium text-[#552d62] hover:underline">{p.data.displayName}</a>
+                  : <span class="font-medium text-gray-800">{p.data.displayName}</span>
+                }
+                {p.data.bio && <span class="text-gray-500"> — {p.data.bio}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h3 class="text-lg font-semibold text-gray-700 mb-3">Alumni</h3>
+          <ul class="space-y-1.5">
+            {alumni.map(p => (
+              <li class="text-sm">
+                {p.data.webpage
+                  ? <a href={p.data.webpage} class="text-gray-700 hover:text-[#552d62]">{p.data.displayName}</a>
+                  : <span class="text-gray-700">{p.data.displayName}</span>
+                }
+                {p.data.nextRole && <span class="text-gray-400"> → {p.data.nextRole}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>

@@ -1,0 +1,71 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+
+const allPeople = await getCollection('people');
+const peopleById = Object.fromEntries(allPeople.map(p => [p.data.id, p.data]));
+
+const projects = (await getCollection('projects')).sort((a, b) => {
+  // Active first, then by lastUpdated descending
+  if (a.data.status !== b.data.status) return a.data.status === 'active' ? -1 : 1;
+  return b.data.lastUpdated.getTime() - a.data.lastUpdated.getTime();
+});
+---
+
+<Base title="Research Projects">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Research Projects</h1>
+    <p class="text-gray-500 mb-10">
+      We use solid-state NMR spectroscopy to investigate the molecular structure of the extracellular matrix in health and disease.
+    </p>
+
+    <!-- Active projects -->
+    {projects.some(p => p.data.status === 'active') && (
+      <section class="mb-12">
+        <h2 class="text-lg font-semibold text-gray-500 uppercase tracking-wide mb-5">Current Projects</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {projects.filter(p => p.data.status === 'active').map(project => {
+            const projectPeople = project.data.people
+              .map((id: string) => peopleById[id])
+              .filter(Boolean);
+            return (
+              <ProjectCard
+                title={project.data.title}
+                excerpt={project.data.excerpt}
+                slug={project.slug}
+                status={project.data.status}
+                people={projectPeople}
+                lastUpdated={project.data.lastUpdated}
+              />
+            );
+          })}
+        </div>
+      </section>
+    )}
+
+    <!-- Past projects -->
+    {projects.some(p => p.data.status === 'inactive') && (
+      <section>
+        <h2 class="text-lg font-semibold text-gray-400 uppercase tracking-wide mb-5">Past Projects</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {projects.filter(p => p.data.status === 'inactive').map(project => {
+            const projectPeople = project.data.people
+              .map((id: string) => peopleById[id])
+              .filter(Boolean);
+            return (
+              <ProjectCard
+                title={project.data.title}
+                excerpt={project.data.excerpt}
+                slug={project.slug}
+                status={project.data.status}
+                people={projectPeople}
+                lastUpdated={project.data.lastUpdated}
+              />
+            );
+          })}
+        </div>
+      </section>
+    )}
+  </div>
+</Base>

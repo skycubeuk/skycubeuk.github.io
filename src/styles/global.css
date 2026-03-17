@@ -1,0 +1,23 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  /* Lab brand colour – purple */
+  --color-lab-50: #f5f0f9;
+  --color-lab-100: #e9ddf2;
+  --color-lab-200: #d4bce6;
+  --color-lab-300: #b78ed3;
+  --color-lab-400: #9a60bf;
+  --color-lab-500: #7d3aaa;
+  --color-lab-600: #652e8e;
+  --color-lab-700: #552d62; /* primary */
+  --color-lab-800: #3f1f4a;
+  --color-lab-900: #2a1232;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Smooth scroll for anchor links */
+html {
+  scroll-behavior: smooth;
+}

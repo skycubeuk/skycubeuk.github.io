@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PublicationItem from '../components/PublicationItem.astro';
+
+const publications = (await getCollection('publications')).sort(
+  (a, b) => b.data.year - a.data.year
+);
+
+const covers = publications.filter(p => p.data.isCover && p.data.coverImage);
+
+// Group by year
+const byYear = publications.reduce<Record<number, typeof publications>>((acc, pub) => {
+  (acc[pub.data.year] ??= []).push(pub);
+  return acc;
+}, {});
+const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
+---
+
+<Base title="Publications">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Publications</h1>
+
+    <!-- Journal Covers -->
+    {covers.length > 0 && (
+      <section class="mb-12">
+        <h2 class="text-lg font-semibold text-gray-500 uppercase tracking-wide mb-5">Journal Covers</h2>
+        <div class="flex flex-wrap gap-4">
+          {covers.map(pub => (
+            <div class="group relative">
+              <a href={pub.data.doi ? `https://doi.org/${pub.data.doi}` : pub.data.url} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={pub.data.coverThumb ?? pub.data.coverImage}
+                  alt={`Journal cover for: ${pub.data.title}`}
+                  class="h-40 w-auto rounded-lg shadow-md group-hover:shadow-lg transition-shadow"
+                />
+              </a>
+              <p class="text-xs text-gray-400 mt-1 max-w-[120px] text-center">{pub.data.journal} {pub.data.year}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Download BibTeX -->
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-lg font-semibold text-gray-500 uppercase tracking-wide">Full Publication List</h2>
+      <a
+        href="/bib/pubs.bib"
+        download
+        class="inline-flex items-center gap-2 text-sm font-medium text-[#552d62] border border-[#552d62] rounded-full px-4 py-1.5 hover:bg-[#552d62] hover:text-white transition-colors"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        Download BibTeX
+      </a>
+    </div>
+
+    <!-- Publications by year -->
+    {years.map(year => (
+      <div class="mb-8">
+        <h3 class="text-xl font-bold text-[#552d62] mb-2">{year}</h3>
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm px-6">
+          {byYear[year].map(pub => (
+            <PublicationItem
+              title={pub.data.title}
+              authors={pub.data.authors}
+              journal={pub.data.journal}
+              year={pub.data.year}
+              doi={pub.data.doi}
+              url={pub.data.url}
+              abstract={pub.data.abstract}
+              isCover={pub.data.isCover}
+              coverThumb={pub.data.coverThumb}
+            />
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</Base>
