@@ -15,6 +15,18 @@
   --color-lab-900: #2a1232;
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Override Tailwind v4 gray palette with neutral (hue-less) values.
+     The default v4 grays use oklch hue ~256° which looks blue on screen. */
+  --color-gray-100: oklch(95.1% 0 0);
+  --color-gray-200: oklch(92.2% 0 0);
+  --color-gray-300: oklch(87.1% 0 0);
+  --color-gray-400: oklch(70.7% 0 0);
+  --color-gray-500: oklch(55.6% 0 0);
+  --color-gray-600: oklch(44.6% 0 0);
+  --color-gray-700: oklch(37.3% 0 0);
+  --color-gray-800: oklch(27.4% 0 0);
+  --color-gray-900: oklch(21.0% 0 0);
 }
 
 /* Smooth scroll for anchor links */

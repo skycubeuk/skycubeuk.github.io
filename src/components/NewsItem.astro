@@ -47,12 +47,12 @@ const cleanExcerpt = excerpt
           </h3>
         )}
         {displayimage ? (
-          <div class="flex flex-col sm:flex-row gap-3 mt-1">
-            <p class="text-sm text-gray-600 leading-relaxed flex-1">{cleanExcerpt}</p>
+          <div class="flex flex-row gap-3 mt-1 items-start">
+            <p class="text-sm text-gray-600 leading-relaxed flex-1 min-w-0">{cleanExcerpt}</p>
             <img
               src={displayimage.src}
               alt={displayimage.alt}
-              class="sm:w-32 w-full sm:h-24 h-40 object-cover rounded-lg flex-shrink-0"
+              class="w-20 h-16 sm:w-28 sm:h-20 object-cover rounded-lg flex-shrink-0"
             />
           </div>
         ) : (
