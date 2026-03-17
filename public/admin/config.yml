@@ -1,15 +1,13 @@
 backend:
-  name: github
-  repo: skycubeuk/skycubeuk.github.io
+  name: git-gateway
   branch: main
-  base_url: https://sveltia-cms-auth.vercel.app  # Free OAuth proxy for GitHub Pages
 
 media_folder: public/img/uploads
 public_folder: /img/uploads
 
-site_url: https://www.wychowlab.org
-display_url: https://www.wychowlab.org
-logo_url: https://www.wychowlab.org/img/logo.png
+site_url: https://wychowlab.netlify.app
+display_url: https://wychowlab.netlify.app
+logo_url: https://wychowlab.netlify.app/img/logo.png
 
 collections:
   # ── SETTINGS ──────────────────────────────────────────

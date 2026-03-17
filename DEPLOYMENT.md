@@ -1,180 +1,94 @@
-# Deploying the WY Chow Lab Website to GitHub Pages
+# Deploying the WY Chow Lab Website
 
 This guide covers two stages:
-1. **Test deployment** — live at `https://skycubeuk.github.io/` (your personal account, free, no custom domain)
-2. **Production deployment** — move to `wychowlab.org` once you're happy with the site
+1. **Test deployment** — live at `https://wychowlab.netlify.app` (free Netlify hosting)
+2. **Production** — add your custom domain `wychowlab.org` when ready
 
-Once set up, the site will **automatically rebuild and redeploy every time you push a change to GitHub**.
+Once set up, the site **automatically rebuilds and redeploys every time you push to GitHub**.
 
 ---
 
 ## What you need
 
-- A [GitHub](https://github.com) account (username: `skycubeuk`)
-- [Git](https://git-scm.com/downloads) installed on your computer
-- The [GitHub CLI](https://cli.github.com/) (`gh`) — optional but makes things easier
+- A [GitHub](https://github.com) account
+- A [Netlify](https://netlify.com) account (free — sign up with your GitHub account)
 
 ---
 
-## Stage 1 — Test deployment at skycubeuk.github.io
+## Step 1 — Push the code to GitHub
 
-### Step 1 — Create the GitHub repository
-
-The repo must be named exactly `skycubeuk.github.io` — this is GitHub's special "personal site" name that serves at the root URL.
-
-#### Option A: Using the GitHub CLI (easiest)
+If you haven't already, create the GitHub repo and push:
 
 ```bash
 cd /home/zabouth/wychowlab-web-v2
-gh repo create skycubeuk/skycubeuk.github.io --public --source=. --remote=origin --push
+gh repo create skycubeuk/wychowlab-web --public --source=. --remote=origin --push
 ```
 
-This creates the repo, links it, and pushes everything in one command.
-
-#### Option B: Using the GitHub website
-
-1. Go to [https://github.com/new](https://github.com/new)
-2. Set the owner to `skycubeuk` (your personal account)
-3. Name the repository **`skycubeuk.github.io`** (exactly this — it's a special name)
-4. Set it to **Public**
-5. **Do not** tick "Add a README", ".gitignore", or "licence" — the repo already has these
-6. Click **Create repository**
-
-Then link and push:
-
-```bash
-cd /home/zabouth/wychowlab-web-v2
-git remote add origin https://github.com/skycubeuk/skycubeuk.github.io.git
-git push -u origin main
-```
+> You can name the repo anything — `wychowlab-web` is used here.
 
 ---
 
-### Step 2 — Enable GitHub Pages
+## Step 2 — Deploy to Netlify
 
-1. Go to `https://github.com/skycubeuk/skycubeuk.github.io`
-2. Click **Settings** (top tab)
-3. Click **Pages** (left sidebar, under "Code and automation")
-4. Under **Build and deployment → Source**, select **GitHub Actions**
-   > ⚠️ Select "GitHub Actions" — NOT "Deploy from a branch". The workflow uses the modern Pages deployment method.
-5. No further settings needed — click **Save** if prompted
+1. Go to [https://app.netlify.com](https://app.netlify.com) and log in
+2. Click **Add new site → Import an existing project**
+3. Choose **GitHub** and authorise Netlify
+4. Select your `wychowlab-web` repository
+5. Build settings are detected automatically from `netlify.toml`:
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+6. Click **Deploy site**
 
----
+Netlify will build and deploy the site. Your site is live at a URL like:
+**`https://wychowlab.netlify.app`** (or a random name — you can rename it in Site Settings)
 
-### Step 3 — Watch the first deploy
-
-After you push to `main`, GitHub Actions automatically:
-
-1. Installs dependencies
-2. Builds the site (`npm run build`)
-3. Deploys the built files
-
-Watch progress at:
-`https://github.com/skycubeuk/skycubeuk.github.io/actions`
-
-The first deploy takes ~2–3 minutes. Once the action shows a green ✅, your site is live at:
-
-**`https://skycubeuk.github.io/`**
+To rename the site:
+- Go to **Site configuration → Site details → Change site name**
+- Set it to `wychowlab` → URL becomes `https://wychowlab.netlify.app`
 
 ---
 
-## Stage 2 — Production deployment to wychowlab.org
+## Step 3 — Enable Netlify Identity (for CMS login)
 
-Once you've reviewed the test site and are happy to go live, follow these additional steps.
+1. In your Netlify dashboard, go to **Identity** (top nav)
+2. Click **Enable Identity**
+3. Under **Registration**, select **Invite only** (so only people you invite can log in)
+4. Scroll to **Services → Git Gateway** and click **Enable Git Gateway**
 
-### Step 4 — Point the site to wychowlab.org
+---
 
-In `astro.config.mjs`, update `site`:
+## Step 4 — Invite editors
 
-```js
-site: 'https://www.wychowlab.org',
-```
+1. Go to **Identity → Invite users**
+2. Enter the email address of anyone who needs to edit content
+3. They'll receive an email to set a password — no GitHub account needed
 
-Add a `CNAME` file to `public/` containing just:
+---
 
-```
-wychowlab.org
-```
+## Step 5 — Access the CMS
 
-Commit and push:
+Anyone you've invited can log in at:
+**`https://wychowlab.netlify.app/admin`**
 
-```bash
-git add astro.config.mjs public/CNAME
-git commit -m "Switch to production domain wychowlab.org"
-git push
-```
+They log in with their email and password (set when they accepted the invite), then edit content through a web form. No code, no GitHub, no technical knowledge required.
 
-### Step 5 — Update DNS records
+---
 
-In your domain registrar (wherever you manage wychowlab.org), set:
+## Step 6 — Add custom domain wychowlab.org (when ready)
+
+1. In Netlify → **Domain management → Add a domain** → enter `wychowlab.org`
+2. In your domain registrar, update DNS:
 
 | Type | Name | Value |
 |------|------|-------|
-| `A` | `@` | `185.199.108.153` |
-| `A` | `@` | `185.199.109.153` |
-| `A` | `@` | `185.199.110.153` |
-| `A` | `@` | `185.199.111.153` |
-| `CNAME` | `www` | `skycubeuk.github.io` |
+| `CNAME` | `www` | `wychowlab.netlify.app` |
+| `A` | `@` | `75.2.60.5` |
 
-Then in GitHub → **Settings → Pages → Custom domain**, type `wychowlab.org` and tick **Enforce HTTPS**.
-
-DNS changes can take up to 24 hours to propagate.
-
-> **Note:** If you want to transfer the repo to the `wychowlab` organisation instead, go to **Settings → Danger Zone → Transfer** and update the `repo:` line in `public/admin/config.yml` accordingly.
-
----
-
-## Step 6 — Set up the Decap CMS editor (for browser-based editing)
-
-This lets non-technical team members edit content at `/admin` without touching code.
-
-### 6a — Create a GitHub OAuth App
-
-1. Go to [https://github.com/settings/developers](https://github.com/settings/developers)
-2. Click **OAuth Apps → New OAuth App**
-3. Fill in:
-   - **Application name:** `WY Chow Lab CMS`
-   - **Homepage URL:** `https://skycubeuk.github.io` (or `https://wychowlab.org` for production)
-   - **Authorization callback URL:** `https://sveltia-cms-auth.vercel.app/callback`
-4. Click **Register application**
-5. Note your **Client ID** and generate a **Client Secret**
-
-### 6b — Deploy the OAuth proxy (one-click, free)
-
-1. Go to [https://github.com/sveltia/sveltia-cms-auth](https://github.com/sveltia/sveltia-cms-auth)
-2. Click **Deploy to Vercel** (free Vercel account required)
-3. Set these environment variables during setup:
-   - `GITHUB_CLIENT_ID` — your Client ID from step 6a
-   - `GITHUB_CLIENT_SECRET` — your Client Secret from step 6a
-4. Deploy — Vercel gives you a URL like `https://my-auth.vercel.app`
-
-### 6c — Update the CMS config
-
-Edit `public/admin/config.yml` and update the `base_url` line:
-
-```yaml
-backend:
-  name: github
-  repo: skycubeuk/skycubeuk.github.io
-  branch: main
-  base_url: https://my-auth.vercel.app    # ← update this with your Vercel URL
-```
-
-Then commit and push:
-
-```bash
-git add public/admin/config.yml
-git commit -m "Update CMS config with OAuth proxy URL"
-git push
-```
-
-### 6d — Grant access to editors
-
-Anyone who needs to edit the site must:
-1. Have a GitHub account
-2. Be added as a **collaborator** on the repository (Settings → Collaborators)
-
-They can then visit `/admin`, log in with GitHub, and edit content directly.
+3. Back in Netlify → **Domain management → Verify DNS configuration**
+4. Tick **Force HTTPS**
+5. Update `astro.config.mjs`: `site: 'https://www.wychowlab.org'`
+6. Update `public/admin/config.yml`: change `site_url` and `display_url` to `https://www.wychowlab.org`
+7. Commit and push — Netlify rebuilds automatically
 
 ---
 
@@ -183,15 +97,15 @@ They can then visit `/admin`, log in with GitHub, and edit content directly.
 ```
 Editor visits /admin
         ↓
-Logs in with GitHub
+Logs in with email + password
         ↓
 Edits content in the web form (no code needed)
         ↓
 Clicks "Publish"
         ↓
-Decap CMS commits the change to GitHub automatically
+Netlify commits the change to GitHub automatically
         ↓
-GitHub Actions rebuilds the site (~2 minutes)
+Netlify rebuilds the site (~1-2 minutes)
         ↓
 Updated site is live
 ```
@@ -200,20 +114,17 @@ Updated site is live
 
 ## Troubleshooting
 
-**Build fails on GitHub Actions**
-- Go to the Actions tab and click the failed run to see the error log
+**Build fails on Netlify**
+- Go to **Deploys** tab and click the failed deploy to see the build log
 
-**Site shows "There isn't a GitHub Pages site here"**
-- Make sure you selected **"GitHub Actions"** as the source (not "Deploy from a branch")
-- Check the Actions tab — the first deploy may still be running
+**CMS shows "Error: Failed to persist entry"**
+- Make sure Git Gateway is enabled: Identity → Services → Git Gateway
+
+**CMS login page doesn't appear**
+- Make sure Netlify Identity is enabled on your site
 
 **Custom domain shows "not secure"**
 - HTTPS can take up to 24 hours after DNS propagates — check back later
 
-**CMS login doesn't work**
-- Double-check the `base_url` in `public/admin/config.yml` matches your Vercel deployment URL exactly
-- Make sure the GitHub OAuth App callback URL matches exactly
-
 **Site not updating after a push**
-- Check the Actions tab — the build may still be in progress
-
+- Check the Deploys tab — the build may still be in progress
