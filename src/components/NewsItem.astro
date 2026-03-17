@@ -34,7 +34,7 @@ const formattedDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 
           <span aria-hidden="true" class="text-lg">{emoji}</span>
           <time datetime={date.toISOString()} class="text-xs text-gray-400">{formattedDate}</time>
         </div>
-        {!shortnews && title && (
+        {title && (
           <h3 class="font-semibold text-gray-900 mb-1">
             <a href={`/posts/${slug}`} class="hover:text-[#552d62] transition-colors">{title}</a>
           </h3>
@@ -56,7 +56,7 @@ const formattedDate = date.toLocaleDateString('en-GB', { day: 'numeric', month: 
         <span aria-hidden="true" class="text-lg mt-0.5 flex-shrink-0">{emoji}</span>
         <div class="flex-1 min-w-0">
           <time datetime={date.toISOString()} class="text-xs text-gray-400 block mb-1">{formattedDate}</time>
-          {!shortnews && title && (
+          {title && (
             <h3 class="font-semibold text-gray-900 mb-1">
               <a href={`/posts/${slug}`} class="hover:text-[#552d62] transition-colors">{title}</a>
             </h3>

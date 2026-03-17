@@ -33,7 +33,7 @@ const projects = (await getCollection('projects')).sort((a, b) => {
               <ProjectCard
                 title={project.data.title}
                 excerpt={project.data.excerpt}
-                slug={project.slug}
+                slug={project.id}
                 status={project.data.status}
                 people={projectPeople}
                 lastUpdated={project.data.lastUpdated}
@@ -57,7 +57,7 @@ const projects = (await getCollection('projects')).sort((a, b) => {
               <ProjectCard
                 title={project.data.title}
                 excerpt={project.data.excerpt}
-                slug={project.slug}
+                slug={project.id}
                 status={project.data.status}
                 people={projectPeople}
                 lastUpdated={project.data.lastUpdated}

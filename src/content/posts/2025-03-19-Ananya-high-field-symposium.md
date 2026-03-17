@@ -1,4 +1,5 @@
 ---
+title: "Ananya was invited to present at the 2025 Symposium of the UK High-field Solid-State NM..."
 displayimage:
   src: "/img/posts/IMG_20250319_nrf-annual-symposium.jpg"
   alt: "Attendees of the 2025 National Research Facility symposium"

@@ -1,4 +1,5 @@
 ---
+title: "Ying spoke at the departmental Condensed Matter Physics seminar. Her talk was titled \"B..."
 date: 2022-05-03
 shortnews: true
 icon: comments

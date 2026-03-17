@@ -69,7 +69,7 @@ const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.r
               icon={post.data.icon}
               title={post.data.title}
               excerpt={post.body?.slice(0, 200).replace(/---[\s\S]*?---/, '').trim() ?? ''}
-              slug={post.slug}
+              slug={post.id}
               displayimage={post.data.displayimage}
               shortnews={post.data.shortnews}
             />
@@ -92,7 +92,7 @@ const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.r
               <ProjectCard
                 title={project.data.title}
                 excerpt={project.data.excerpt}
-                slug={project.slug}
+                slug={project.id}
                 status={project.data.status}
                 people={projectPeople}
                 lastUpdated={project.data.lastUpdated}

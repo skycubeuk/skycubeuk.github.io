@@ -17,8 +17,8 @@ const posts = (await getCollection('posts')).sort(
           date={post.data.date}
           icon={post.data.icon}
           title={post.data.title}
-          excerpt={post.body?.replace(/^---[\s\S]*?---\s*/m, '').slice(0, 300) ?? ''}
-          slug={post.slug}
+          excerpt={post.body?.slice(0, 300) ?? ''}
+          slug={post.id}
           displayimage={post.data.displayimage}
           shortnews={post.data.shortnews}
         />

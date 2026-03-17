@@ -1,4 +1,5 @@
 ---
+title: "Ying spoke at the Warwick Biomedical Science seminar. Her talk was titled \"From a heavy..."
 date: 2022-02-23
 shortnews: true
 icon: comments

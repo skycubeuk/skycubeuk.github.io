@@ -1,4 +1,5 @@
 ---
+title: "Ying started the Academic and Professional Pathway for Teaching Excellence (APPTE) cour..."
 date: 2022-04-28
 shortnews: true
 icon: chalkboard-user

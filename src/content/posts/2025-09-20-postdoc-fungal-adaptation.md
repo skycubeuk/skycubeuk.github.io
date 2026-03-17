@@ -1,4 +1,5 @@
 ---
+title: "Job alert! We are looking to recruit a postdoc to start in early 2026 to work on a proj..."
 date: 2025-09-20
 shortnews: true
 icon: business-time

@@ -1,4 +1,5 @@
 ---
+title: "Ying spoke at the inVISIBLE research and diversity conference today. Her talk was title..."
 date: 2022-07-15
 shortnews: true
 icon: users

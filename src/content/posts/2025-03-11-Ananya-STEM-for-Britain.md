@@ -1,4 +1,5 @@
 ---
+title: "As a finalist in the STEM for Britain competition, Ananya presented a poster on \"Applyi..."
 date: 2025-03-11
 shortnews: true
 icon: landmark
