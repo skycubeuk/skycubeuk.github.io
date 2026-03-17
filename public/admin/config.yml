@@ -92,6 +92,8 @@ collections:
     label_singular: "Person"
     folder: src/content/people
     create: true
+    extension: yaml
+    format: yaml
     identifier_field: displayName
     fields:
       - { label: "ID (slug)", name: id, widget: string,
@@ -129,6 +131,8 @@ collections:
     label_singular: "Publication"
     folder: src/content/publications
     create: true
+    extension: yaml
+    format: yaml
     identifier_field: title
     fields:
       - { label: "Title", name: title, widget: string }
