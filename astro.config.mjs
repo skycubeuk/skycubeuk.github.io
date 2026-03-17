@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://www.wychowlab.org',
+  site: 'https://skycubeuk.github.io',
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],

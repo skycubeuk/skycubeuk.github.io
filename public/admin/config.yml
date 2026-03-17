@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: wychowlab/wychowlab-web-v2
+  repo: skycubeuk/skycubeuk.github.io
   branch: main
   base_url: https://sveltia-cms-auth.vercel.app  # Free OAuth proxy for GitHub Pages
 
