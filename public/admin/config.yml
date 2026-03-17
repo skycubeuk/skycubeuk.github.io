@@ -32,6 +32,8 @@ collections:
     folder: src/content/posts
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    media_folder: /public/img/posts
+    public_folder: /img/posts
     fields:
       - { label: "Title", name: title, widget: string, required: false,
           hint: "Leave blank for short news items with no heading." }
@@ -95,6 +97,8 @@ collections:
     extension: yaml
     format: yaml
     identifier_field: displayName
+    media_folder: /public/img/people
+    public_folder: /img/people
     fields:
       - { label: "ID (slug)", name: id, widget: string,
           hint: "Short unique identifier, e.g. 'ying' or 'phd2022_ananya'. Used in projects to link people." }
@@ -134,6 +138,8 @@ collections:
     extension: yaml
     format: yaml
     identifier_field: title
+    media_folder: /public/img/covers
+    public_folder: /img/covers
     fields:
       - { label: "Title", name: title, widget: string }
       - { label: "Authors", name: authors, widget: string,
