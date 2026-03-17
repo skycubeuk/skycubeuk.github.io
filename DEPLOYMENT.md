@@ -1,113 +1,101 @@
-# Deploying the WY Chow Lab Website
+# Deployment Guide — WY Chow Lab Website
 
-This guide covers two stages:
-1. **Test deployment** — live at `https://wychowlab.netlify.app` (free Netlify hosting)
-2. **Production** — add your custom domain `wychowlab.org` when ready
+## Current status
 
-Once set up, the site **automatically rebuilds and redeploys every time you push to GitHub**.
+| Item | Status | Details |
+|------|--------|---------|
+| GitHub repo | ✅ Live | `skycubeuk/skycubeuk.github.io` |
+| Netlify hosting | ✅ Live | Auto-deploys on every push to `main` |
+| Preview URL | ✅ Live | https://jovial-profiterole-aed202.netlify.app |
+| Netlify Identity | ✅ Enabled | Invite-only registration |
+| Git Gateway | ✅ Enabled | CMS can commit to GitHub |
+| CMS editor | ✅ Working | https://jovial-profiterole-aed202.netlify.app/admin |
+| Custom domain | ⏳ Pending | Switch to `wychowlab.org` when ready |
 
 ---
 
-## What you need
+## Inviting new editors
 
-- A [GitHub](https://github.com) account
-- A [Netlify](https://netlify.com) account (free — sign up with your GitHub account)
+Anyone you want to give CMS access to needs an invite:
+
+1. Go to: https://app.netlify.com/projects/jovial-profiterole-aed202/configuration/identity
+2. Click **Invite users**
+3. Enter their email address — they'll receive a link to set a password
+4. Once they've set a password they can log in at `/admin` — no GitHub account needed
+
+> **Note:** After clicking the invite link, a popup will appear on the homepage asking them to set a password. If they don't see it, ask them to try the link again in a fresh browser tab.
 
 ---
 
-## Step 1 — Push the code to GitHub
+## Day-to-day editing
 
-If you haven't already, create the GitHub repo and push:
+Editors visit **https://jovial-profiterole-aed202.netlify.app/admin**, log in with email + password, and edit content through web forms. No coding required.
 
-```bash
-cd /home/zabouth/wychowlab-web-v2
-gh repo create skycubeuk/wychowlab-web --public --source=. --remote=origin --push
+```
+Editor visits /admin → logs in → edits content → clicks Publish
+        ↓
+Decap CMS commits the change to GitHub automatically
+        ↓
+Netlify detects the new commit and rebuilds the site (~2 minutes)
+        ↓
+Updated site is live
 ```
 
-> You can name the repo anything — `wychowlab-web` is used here.
-
 ---
 
-## Step 2 — Deploy to Netlify
+## Switching to the production domain (wychowlab.org)
 
-1. Go to [https://app.netlify.com](https://app.netlify.com) and log in
-2. Click **Add new site → Import an existing project**
-3. Choose **GitHub** and authorise Netlify
-4. Select your `wychowlab-web` repository
-5. Build settings are detected automatically from `netlify.toml`:
-   - **Build command:** `npm run build`
-   - **Publish directory:** `dist`
-6. Click **Deploy site**
+When you're happy with the preview site and ready to go live on `wychowlab.org`:
 
-Netlify will build and deploy the site. Your site is live at a URL like:
-**`https://wychowlab.netlify.app`** (or a random name — you can rename it in Site Settings)
+### Step 1 — Add the domain in Netlify
 
-To rename the site:
-- Go to **Site configuration → Site details → Change site name**
-- Set it to `wychowlab` → URL becomes `https://wychowlab.netlify.app`
+1. Go to https://app.netlify.com/projects/jovial-profiterole-aed202/domain-management
+2. Click **Add a domain**
+3. Enter `wychowlab.org` and follow the verification steps
+4. Tick **Force HTTPS** once the domain is verified
 
----
+### Step 2 — Update DNS records
 
-## Step 3 — Enable Netlify Identity (for CMS login)
-
-1. In your Netlify dashboard, go to **Identity** (top nav)
-2. Click **Enable Identity**
-3. Under **Registration**, select **Invite only** (so only people you invite can log in)
-4. Scroll to **Services → Git Gateway** and click **Enable Git Gateway**
-
----
-
-## Step 4 — Invite editors
-
-1. Go to **Identity → Invite users**
-2. Enter the email address of anyone who needs to edit content
-3. They'll receive an email to set a password — no GitHub account needed
-
----
-
-## Step 5 — Access the CMS
-
-Anyone you've invited can log in at:
-**`https://wychowlab.netlify.app/admin`**
-
-They log in with their email and password (set when they accepted the invite), then edit content through a web form. No code, no GitHub, no technical knowledge required.
-
----
-
-## Step 6 — Add custom domain wychowlab.org (when ready)
-
-1. In Netlify → **Domain management → Add a domain** → enter `wychowlab.org`
-2. In your domain registrar, update DNS:
+In your domain registrar (wherever you manage `wychowlab.org`), set:
 
 | Type | Name | Value |
 |------|------|-------|
-| `CNAME` | `www` | `wychowlab.netlify.app` |
 | `A` | `@` | `75.2.60.5` |
+| `CNAME` | `www` | `jovial-profiterole-aed202.netlify.app` |
 
-3. Back in Netlify → **Domain management → Verify DNS configuration**
-4. Tick **Force HTTPS**
-5. Update `astro.config.mjs`: `site: 'https://www.wychowlab.org'`
-6. Update `public/admin/config.yml`: change `site_url` and `display_url` to `https://www.wychowlab.org`
-7. Commit and push — Netlify rebuilds automatically
+DNS changes can take up to 24 hours to propagate.
+
+### Step 3 — Update the site config
+
+In `astro.config.mjs`, change the `site` line:
+```js
+site: 'https://www.wychowlab.org',
+```
+
+In `public/admin/config.yml`, update the URL lines:
+```yaml
+site_url: https://www.wychowlab.org
+display_url: https://www.wychowlab.org
+logo_url: https://www.wychowlab.org/img/logo.png
+```
+
+Commit and push — Netlify rebuilds automatically with the new URLs.
 
 ---
 
-## Day-to-day editing workflow
+## Making code changes
 
-```
-Editor visits /admin
-        ↓
-Logs in with email + password
-        ↓
-Edits content in the web form (no code needed)
-        ↓
-Clicks "Publish"
-        ↓
-Netlify commits the change to GitHub automatically
-        ↓
-Netlify rebuilds the site (~1-2 minutes)
-        ↓
-Updated site is live
+The site rebuilds automatically whenever you push to `main`. For local development:
+
+```bash
+# Install dependencies (first time only)
+npm install
+
+# Start local dev server at http://localhost:4321
+npm run dev
+
+# Build and check for errors before pushing
+npm run build
 ```
 
 ---
@@ -115,16 +103,21 @@ Updated site is live
 ## Troubleshooting
 
 **Build fails on Netlify**
-- Go to **Deploys** tab and click the failed deploy to see the build log
+Go to https://app.netlify.com/projects/jovial-profiterole-aed202/deploys and click the failed deploy to see the full build log.
+
+**CMS invite email link doesn't show a password form**
+The Netlify Identity widget must be loaded on the page. Make sure the deploy is complete before clicking the link. Try opening the link in a fresh browser tab (not an email preview pane).
 
 **CMS shows "Error: Failed to persist entry"**
-- Make sure Git Gateway is enabled: Identity → Services → Git Gateway
+Check that Git Gateway is enabled:
+https://app.netlify.com/projects/jovial-profiterole-aed202/configuration/identity
+→ scroll to **Services → Git Gateway**
 
-**CMS login page doesn't appear**
-- Make sure Netlify Identity is enabled on your site
+**CMS shows "No entries" for People or Publications**
+These collections use `.yaml` files. The config has `extension: yaml` and `format: yaml` set — if this is ever reset, that's the fix.
 
 **Custom domain shows "not secure"**
-- HTTPS can take up to 24 hours after DNS propagates — check back later
+HTTPS provisioning can take up to 24 hours after DNS propagates — check back later.
 
-**Site not updating after a push**
-- Check the Deploys tab — the build may still be in progress
+**Site not updating after a push or CMS edit**
+Check the Deploys tab — the build may still be in progress (usually takes ~2 minutes).
