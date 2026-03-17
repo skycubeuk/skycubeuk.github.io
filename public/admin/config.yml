@@ -5,9 +5,9 @@ backend:
 media_folder: public/img/uploads
 public_folder: /img/uploads
 
-site_url: https://wychowlab.netlify.app
-display_url: https://wychowlab.netlify.app
-logo_url: https://wychowlab.netlify.app/img/logo.png
+site_url: https://jovial-profiterole-aed202.netlify.app
+display_url: https://jovial-profiterole-aed202.netlify.app
+logo_url: https://jovial-profiterole-aed202.netlify.app/img/logo.png
 
 collections:
   # ── SETTINGS ──────────────────────────────────────────
