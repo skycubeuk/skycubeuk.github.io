@@ -180,9 +180,6 @@ The named volume `proxy-logs` persists across rebuilds.
 
 ## Troubleshooting
 
-**Login popup stays open with a white/blank screen**  
-The popup now shows a styled error card with a "Close this window" button for all error cases. If you see a plain white screen you may be running an older version — rebuild the image.
-
 **`auth_blocked` in the log but the user should have access**  
 Check they have been added as a collaborator (not just an outside contributor) and that they accepted the invitation.
 
