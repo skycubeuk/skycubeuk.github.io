@@ -159,7 +159,7 @@ collections:
                 collection: publication_list
                 search_fields: ["title", "authors", "year"]
                 value_field: key
-                display_fields: ["{{year}} — {{title}}"]
+                display_fields: ["{{fields.year}} — {{title}}"]
                 hint: "Search by title or author to find the paper"
               - { label: "Cover Image", name: coverImage, widget: image }
               - { label: "Cover Thumbnail", name: coverThumb, widget: image }
@@ -174,7 +174,7 @@ collections:
     extension: yaml
     format: yaml
     identifier_field: key
-    summary: "{{year}} — {{title}}"
+    summary: "{{fields.year}} — {{title}}"
     fields:
       - { label: "Citation Key", name: key, widget: string }
       - { label: "Title", name: title, widget: string }
