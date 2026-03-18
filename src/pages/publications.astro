@@ -25,9 +25,9 @@ const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
     {covers.length > 0 && (
       <section class="mb-12">
         <h2 class="text-lg font-semibold text-gray-500 uppercase tracking-wide mb-5">Journal Covers</h2>
-        <div class="flex flex-wrap gap-4">
+        <div class="flex flex-wrap gap-6 justify-center">
           {covers.map(pub => (
-            <div class="group relative">
+            <div class="group flex flex-col items-center">
               <a href={pub.data.doi ? `https://doi.org/${pub.data.doi}` : pub.data.url} target="_blank" rel="noopener noreferrer">
                 <img
                   src={pub.data.coverThumb ?? pub.data.coverImage}
@@ -35,7 +35,7 @@ const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
                   class="h-72 w-auto rounded-lg shadow-md group-hover:shadow-lg transition-shadow"
                 />
               </a>
-              <p class="text-xs text-gray-400 mt-1 max-w-[120px] text-center">{pub.data.journal} {pub.data.year}</p>
+              <p class="text-xs text-gray-400 mt-1 text-center">{pub.data.journal} {pub.data.year}</p>
             </div>
           ))}
         </div>
