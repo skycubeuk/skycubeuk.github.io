@@ -126,7 +126,8 @@ function entryToYaml(entry, coverData) {
 
   const yearStr = f('YEAR');
   if (!yearStr) throw new Error(`Entry ${entry.key} is missing a year`);
-  obj.year = parseInt(yearStr, 10);
+  // Store as quoted string so Decap CMS summary templates interpolate correctly
+  obj.year = yearStr.trim();
 
   if (f('DOI')) obj.doi = f('DOI');
   if (f('URL')) obj.url = f('URL');

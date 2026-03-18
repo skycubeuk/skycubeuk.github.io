@@ -53,7 +53,7 @@ const publications = defineCollection({
     title: z.string(),
     authors: z.string(),
     journal: z.string(),
-    year: z.number(),
+    year: z.coerce.number(),
     doi: z.string().optional(),
     url: z.string().optional(),
     abstract: z.string().optional(),
