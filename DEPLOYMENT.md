@@ -128,7 +128,7 @@ docker compose up -d            # restart the container
    - Authorization callback URL: `https://cms.skycube.me.uk/callback`
    - Copy the Client ID and generate a Client Secret
 
-2. Copy `.env.example` to `.env` and fill in `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`
+2. Copy `.env.example` to `.env` and fill in `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, and `GITHUB_REPO`
 
 3. Copy `docker-compose.override.yml.example` to `docker-compose.override.yml` and update the Traefik labels for your domain and certresolver
 
@@ -143,6 +143,21 @@ docker compose up -d            # restart the container
    ```
 
 > **Important:** `ALLOWED_ORIGIN` must exactly match the scheme + host of your live site (e.g. `https://skycubeuk.github.io`). The proxy pins postMessage communication to this origin — mismatched values will break CMS login.
+
+### Giving editors CMS access
+
+CMS access is controlled by GitHub repo write permissions — no server config changes needed.
+
+**To add an editor:**
+1. Go to the repo → **Settings → Collaborators and teams → Add people**
+2. Enter their GitHub username, set role to **Write**, send invite
+3. They accept the invite and can log in at `/admin` immediately
+
+**To remove an editor:**
+1. Go to the repo → **Settings → Collaborators and teams**
+2. Click the ✕ next to their name — they are blocked on their next login attempt
+
+The proxy verifies repo write access on every login, so changes take effect immediately without any server restarts.
 
 ---
 
@@ -175,6 +190,9 @@ curl https://cms.skycube.me.uk/auth
 # Should redirect (302) to github.com
 ```
 If it's down, SSH to the VPS and run `docker compose up -d` in the `proxy/` directory.
+
+**CMS shows "Your GitHub account is not authorised to access this CMS"**
+The logged-in GitHub account doesn't have write access to the repo. Go to the repo → **Settings → Collaborators** and add them, or check the audit log (`/app/logs/auth.log`) to confirm the `auth_blocked` entry and username.
 
 **CMS shows "No entries" for People or Publications**
 These collections use `.yaml` files. The config has `extension: yaml` and `format: yaml` set — if this is ever reset, that's the fix.

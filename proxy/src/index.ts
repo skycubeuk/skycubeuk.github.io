@@ -11,12 +11,18 @@ app.set('trust proxy', 1);
 const {
   GITHUB_CLIENT_ID: CLIENT_ID,
   GITHUB_CLIENT_SECRET: CLIENT_SECRET,
+  GITHUB_REPO,
   ALLOWED_ORIGIN,
   PORT = '3000',
 } = process.env;
 
 if (!CLIENT_ID || !CLIENT_SECRET) {
   console.error('Missing required env vars: GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET');
+  process.exit(1);
+}
+
+if (!GITHUB_REPO) {
+  console.error('Missing required env var: GITHUB_REPO (e.g. skycubeuk/skycubeuk.github.io)');
   process.exit(1);
 }
 
@@ -142,8 +148,46 @@ app.get('/callback', async (req: Request, res: Response) => {
       return sendMessage(res, 'error', data.error_description ?? data.error ?? 'Token exchange failed');
     }
 
-    log('auth_success', { ip });
-    return sendMessage(res, 'success', JSON.stringify({ token: data.access_token, provider: 'github' }));
+    const token = data.access_token;
+
+    // Resolve the GitHub username and verify repo write access.
+    // Both calls use the user's own token — no machine credentials needed.
+    let github_username: string;
+    let hasPush: boolean;
+    try {
+      const ghHeaders = {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
+        'User-Agent': 'decap-oauth-proxy/1.0',
+      };
+
+      const [userRes, repoRes] = await Promise.all([
+        fetch('https://api.github.com/user', { headers: ghHeaders }),
+        fetch(`https://api.github.com/repos/${GITHUB_REPO}`, { headers: ghHeaders }),
+      ]);
+
+      if (!userRes.ok || !repoRes.ok) {
+        throw new Error(`GitHub API returned user=${userRes.status} repo=${repoRes.status}`);
+      }
+
+      const userData = (await userRes.json()) as { login?: string };
+      const repoData = (await repoRes.json()) as { permissions?: { push?: boolean } };
+
+      github_username = (userData.login ?? 'unknown').toLowerCase();
+      hasPush = repoData.permissions?.push === true;
+    } catch (err) {
+      console.error('GitHub access check error:', err);
+      log('token_exchange_error', { ip, message: 'GitHub access check failed' });
+      return sendMessage(res, 'error', 'Could not verify GitHub access. Please try again.');
+    }
+
+    if (!hasPush) {
+      log('auth_blocked', { ip, github_username });
+      return sendMessage(res, 'error', 'Your GitHub account is not authorised to access this CMS.');
+    }
+
+    log('auth_success', { ip, github_username });
+    return sendMessage(res, 'success', JSON.stringify({ token, provider: 'github' }));
   } catch (err) {
     console.error('Token exchange error:', err);
     log('token_exchange_error', { ip, message: 'Internal error during token exchange' });
