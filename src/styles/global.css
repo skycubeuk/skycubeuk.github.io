@@ -34,3 +34,8 @@
 html {
   scroll-behavior: smooth;
 }
+
+/* Offset anchor jumps to clear the sticky header (h-16 = 64px) */
+[id] {
+  scroll-margin-top: 5rem;
+}
