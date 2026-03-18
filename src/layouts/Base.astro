@@ -142,13 +142,6 @@ const canonicalURL = new URL(Astro.url.pathname, site.url);
         btn.setAttribute('aria-expanded', String(!open));
       });
     </script>
-    <!-- Netlify Identity widget — handles invite/login tokens from email links -->
-    <script>
-      import netlifyIdentity from 'netlify-identity-widget';
-      netlifyIdentity.init();
-      netlifyIdentity.on('login', () => {
-        document.location.href = '/admin/';
-      });
-    </script>
+
   </body>
 </html>

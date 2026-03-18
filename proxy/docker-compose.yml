@@ -1,0 +1,20 @@
+services:
+  oauth-proxy:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "3000:3000"
+    # ── Traefik labels ────────────────────────────────────────────────────────
+    # Uncomment and customise the block below when deploying behind Traefik.
+    # Replace the entrypoint name ("websecure") and certresolver ("letsencrypt")
+    # with whatever your Traefik instance uses.
+    #
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.oauth-proxy.rule=Host(`cms.skycube.me.uk`)"
+    #   - "traefik.http.routers.oauth-proxy.entrypoints=websecure"
+    #   - "traefik.http.routers.oauth-proxy.tls=true"
+    #   - "traefik.http.routers.oauth-proxy.tls.certresolver=letsencrypt"
+    #   - "traefik.http.services.oauth-proxy.loadbalancer.server.port=3000"
+    # ─────────────────────────────────────────────────────────────────────────

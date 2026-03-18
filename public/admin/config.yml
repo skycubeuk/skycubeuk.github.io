@@ -1,13 +1,15 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: skycubeuk/skycubeuk.github.io
   branch: main
+  base_url: https://cms.skycube.me.uk
 
 media_folder: public/img
 public_folder: /img
 
-site_url: https://jovial-profiterole-aed202.netlify.app
-display_url: https://jovial-profiterole-aed202.netlify.app
-logo_url: https://jovial-profiterole-aed202.netlify.app/img/logo.png
+site_url: https://skycubeuk.github.io
+display_url: https://skycubeuk.github.io
+logo_url: https://skycubeuk.github.io/img/logo.png
 
 collections:
   # ── SETTINGS ──────────────────────────────────────────

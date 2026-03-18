@@ -5,7 +5,7 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://jovial-profiterole-aed202.netlify.app',
+  site: 'https://skycubeuk.github.io',
   integrations: [sitemap()],
   vite: {
     plugins: [tailwindcss()],
