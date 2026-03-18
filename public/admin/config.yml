@@ -178,6 +178,6 @@ collections:
     fields:
       - { label: "Citation Key", name: key, widget: string }
       - { label: "Title", name: title, widget: string }
-      - { label: "Year", name: year, widget: number }
+      - { label: "Year", name: year, widget: string }
       - { label: "Authors", name: authors, widget: string }
       - { label: "Journal", name: journal, widget: string }
