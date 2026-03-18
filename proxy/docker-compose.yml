@@ -3,8 +3,13 @@ services:
     build: .
     restart: unless-stopped
     env_file: .env
+    volumes:
+      - proxy-logs:/app/logs
     networks:
       - proxy
+
+volumes:
+  proxy-logs:
 
 networks:
   proxy:

@@ -1,7 +1,12 @@
 import express, { type Request, type Response } from 'express';
 import { randomBytes } from 'node:crypto';
+import { log } from './logger.js';
 
 const app = express();
+
+// Trust the first proxy (Traefik) so req.ip reflects the real client IP
+// rather than the container's internal address.
+app.set('trust proxy', 1);
 
 const {
   GITHUB_CLIENT_ID: CLIENT_ID,
@@ -64,12 +69,15 @@ app.get('/auth', (_req: Request, res: Response) => {
   pruneExpiredStates();
 
   if (pendingStates.size >= MAX_PENDING_STATES) {
+    log('auth_rejected', { ip: _req.ip ?? 'unknown', reason: 'too_many_pending' });
     res.status(429).send('Too many pending authorisations. Try again later.');
     return;
   }
 
   const state = randomBytes(16).toString('hex');
   pendingStates.set(state, Date.now());
+
+  log('auth_start', { ip: _req.ip ?? 'unknown' });
 
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
@@ -89,18 +97,22 @@ app.get('/auth', (_req: Request, res: Response) => {
 app.get('/callback', async (req: Request, res: Response) => {
   pruneExpiredStates();
 
+  const ip = req.ip ?? 'unknown';
   const { code, state, error, error_description } = req.query as Record<string, string | undefined>;
 
   if (error) {
+    log('auth_error', { ip, error: String(error), error_description: String(error_description ?? '') });
     return sendMessage(res, 'error', String(error_description ?? error));
   }
 
   if (!state || !pendingStates.has(state)) {
+    log('auth_failure', { ip, reason: 'invalid_or_expired_state' });
     return sendMessage(res, 'error', 'Invalid or expired state parameter.');
   }
   pendingStates.delete(state);
 
   if (!code) {
+    log('auth_failure', { ip, reason: 'no_code' });
     return sendMessage(res, 'error', 'No code returned by GitHub.');
   }
 
@@ -119,18 +131,22 @@ app.get('/callback', async (req: Request, res: Response) => {
     });
 
     if (!tokenRes.ok) {
+      log('token_exchange_error', { ip, message: `GitHub token endpoint returned ${tokenRes.status}` });
       return sendMessage(res, 'error', `GitHub token endpoint returned ${tokenRes.status}`);
     }
 
     const data = (await tokenRes.json()) as { access_token?: string; error?: string; error_description?: string };
 
     if (data.error || !data.access_token) {
+      log('token_exchange_error', { ip, message: data.error_description ?? data.error ?? 'Token exchange failed' });
       return sendMessage(res, 'error', data.error_description ?? data.error ?? 'Token exchange failed');
     }
 
+    log('auth_success', { ip });
     return sendMessage(res, 'success', JSON.stringify({ token: data.access_token, provider: 'github' }));
   } catch (err) {
     console.error('Token exchange error:', err);
+    log('token_exchange_error', { ip, message: 'Internal error during token exchange' });
     return sendMessage(res, 'error', 'Internal error during token exchange.');
   }
 });
