@@ -4,14 +4,9 @@ A small, self-hosted OAuth proxy that lets [Decap CMS](https://decapcms.org/) au
 
 ## Features
 
-- **CSRF protection** — per-request state tokens with 10-minute expiry
-- **Repo-permission access control** — only GitHub users with write access to your repository can log in; manage access entirely from the GitHub UI (no server editing needed)
-- **Audit logging** — structured JSONL log of every auth event (success, failure, blocked) written to a Docker volume
-- **Rate limiting** — `/auth` returns HTTP 429 if the in-memory state map is full (protects against flood attacks)
-- **XSS-safe popup HTML** — `</script>` and `&` are Unicode-escaped in the callback page
-- **Non-root Docker** — runs as the `node` user; multi-stage image keeps the final image small
-- **Graceful shutdown** — SIGTERM flushes the audit log before exiting
-- **Health check** — `GET /health` returns `{"status":"ok"}` for reverse-proxy probes
+- **Access control** — only GitHub users with write access to your repository can log in; manage access entirely from the GitHub collaborators UI, no server editing needed
+- **Audit log** — every login attempt (success, failure, or block) is recorded to a persistent log file with timestamp and username
+- **Works with any static host** — GitHub Pages, Cloudflare Pages, S3, or anything else; the only requirement is that your content repository is on GitHub
 
 ---
 
