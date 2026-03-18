@@ -1,5 +1,9 @@
 # Copilot Instructions — WY Chow Lab Website
 
+## Git workflow
+
+**Only `git commit` — never `git push`.** Leave pushing to the user.
+
 ## Commands
 
 ```sh
