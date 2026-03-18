@@ -32,7 +32,7 @@ const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
                 <img
                   src={pub.data.coverThumb ?? pub.data.coverImage}
                   alt={`Journal cover for: ${pub.data.title}`}
-                  class="h-40 w-auto rounded-lg shadow-md group-hover:shadow-lg transition-shadow"
+                  class="h-72 w-auto rounded-lg shadow-md group-hover:shadow-lg transition-shadow"
                 />
               </a>
               <p class="text-xs text-gray-400 mt-1 max-w-[120px] text-center">{pub.data.journal} {pub.data.year}</p>
