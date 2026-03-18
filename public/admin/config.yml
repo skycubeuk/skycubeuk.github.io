@@ -36,6 +36,7 @@ collections:
     folder: src/content/posts
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    summary: "{{date}} — {{title}}"
     media_folder: /public/img/posts
     public_folder: /img/posts
     fields:
@@ -72,6 +73,7 @@ collections:
     label_singular: "Research Project"
     folder: src/content/projects
     create: true
+    summary: "{{lastUpdated}} — {{title}}"
     fields:
       - { label: "Title", name: title, widget: string }
       - { label: "Short Description", name: excerpt, widget: text,
@@ -142,6 +144,7 @@ collections:
     extension: yaml
     format: yaml
     identifier_field: title
+    summary: "{{year}} — {{title}}"
     media_folder: /public/img/covers
     public_folder: /img/covers
     fields:
