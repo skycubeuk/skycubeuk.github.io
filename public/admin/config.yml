@@ -159,7 +159,7 @@ collections:
                 collection: publication_list
                 search_fields: ["title", "authors", "year"]
                 value_field: key
-                display_fields: ["{{fields.year}} — {{title}}"]
+                display_fields: ["{{fields.year}} — {{title | truncate(70)}}"]
                 hint: "Search by title or author to find the paper"
               - { label: "Cover Image", name: coverImage, widget: image }
               - { label: "Cover Thumbnail", name: coverThumb, widget: image }
