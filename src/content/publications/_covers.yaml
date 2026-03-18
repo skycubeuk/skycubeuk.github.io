@@ -1,20 +1,14 @@
 # Cover image metadata for publications.
-# This file is the source of truth for cover images — it is merged into
-# each generated YAML by scripts/bib-to-yaml.mjs.
+# Managed via Decap CMS → Publications → Journal Covers.
 #
-# Add an entry here when a paper has a journal cover associated with it:
-#
-#   CitationKey:
-#     isCover: true
-#     coverImage: /img/covers/Filename.jpg
-#     coverThumb: /img/covers/thumbs/Filename.jpg
+# Each entry links a BibTeX citation key to its journal cover images.
+# The key must exactly match the key in public/bib/pubs.bib.
+# These fields are merged into the generated YAML by scripts/bib-to-yaml.mjs.
 
-Goldberga2019:
-  isCover: true
-  coverImage: /img/covers/Chow2018.jpg
-  coverThumb: /img/covers/thumbs/Chow2018.jpg
-
-Chow2020:
-  isCover: true
-  coverImage: /img/covers/Chow2020.jpg
-  coverThumb: /img/covers/thumbs/Chow2020.jpg
+covers:
+  - key: Goldberga2019
+    coverImage: /img/covers/Chow2018.jpg
+    coverThumb: /img/covers/thumbs/Chow2018.jpg
+  - key: Chow2020
+    coverImage: /img/covers/Chow2020.jpg
+    coverThumb: /img/covers/thumbs/Chow2020.jpg

@@ -149,7 +149,10 @@ function main() {
   const entries = bibtex.entries(bibSrc);
 
   const coverData = existsSync(COVERS_FILE)
-    ? (parseYaml(readFileSync(COVERS_FILE, 'utf8')) ?? {})
+    ? Object.fromEntries(
+        ((parseYaml(readFileSync(COVERS_FILE, 'utf8')) ?? {}).covers ?? [])
+          .map(c => [c.key, c])
+      )
     : {};
 
   let generated = 0;

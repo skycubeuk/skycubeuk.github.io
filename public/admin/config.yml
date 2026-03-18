@@ -136,29 +136,24 @@ collections:
       - { label: "Sort order (lower = first)", name: order, widget: number, default: 99, required: false }
 
   # ── PUBLICATIONS ──────────────────────────────────────
+  # Bibliographic data lives in public/bib/pubs.bib (the source of truth).
+  # YAML files are generated from it automatically on every build.
+  # Use this section only to manage journal cover images.
   - name: publications
     label: "Publications"
-    label_singular: "Publication"
-    folder: src/content/publications
-    create: true
-    extension: yaml
-    format: yaml
-    identifier_field: title
-    summary: "{{year}} — {{title}}"
-    media_folder: /public/img/covers
-    public_folder: /img/covers
-    fields:
-      - { label: "Title", name: title, widget: string }
-      - { label: "Authors", name: authors, widget: string,
-          hint: "Full author list as it appears in the journal." }
-      - { label: "Journal", name: journal, widget: string }
-      - { label: "Year", name: year, widget: number }
-      - { label: "DOI", name: doi, widget: string, required: false,
-          hint: "Just the DOI, e.g. 10.1002/anie.202015215" }
-      - { label: "URL", name: url, widget: string, required: false }
-      - { label: "Abstract", name: abstract, widget: text, required: false }
-      - { label: "Volume", name: volume, widget: string, required: false }
-      - { label: "Pages", name: pages, widget: string, required: false }
-      - { label: "Journal Cover?", name: isCover, widget: boolean, default: false }
-      - { label: "Cover Image", name: coverImage, widget: image, required: false }
-      - { label: "Cover Thumbnail", name: coverThumb, widget: image, required: false }
+    files:
+      - name: covers
+        label: "Journal Covers"
+        file: src/content/publications/_covers.yaml
+        media_folder: /public/img/covers
+        public_folder: /img/covers
+        fields:
+          - label: "Covers"
+            name: covers
+            widget: list
+            hint: "Each entry links a BibTeX key to its journal cover images. The key must exactly match the key in pubs.bib."
+            fields:
+              - { label: "BibTeX Citation Key", name: key, widget: string,
+                  hint: "e.g. Chow2020 — must match the BibTeX key exactly" }
+              - { label: "Cover Image", name: coverImage, widget: image }
+              - { label: "Cover Thumbnail", name: coverThumb, widget: image }
