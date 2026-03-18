@@ -6,6 +6,7 @@ const app = express();
 const {
   GITHUB_CLIENT_ID: CLIENT_ID,
   GITHUB_CLIENT_SECRET: CLIENT_SECRET,
+  ALLOWED_ORIGIN,
   PORT = '3000',
 } = process.env;
 
@@ -14,9 +15,24 @@ if (!CLIENT_ID || !CLIENT_SECRET) {
   process.exit(1);
 }
 
+if (!ALLOWED_ORIGIN) {
+  console.warn('Warning: ALLOWED_ORIGIN env var not set. Defaulting to https://skycubeuk.github.io');
+}
+
+const CMS_ORIGIN = ALLOWED_ORIGIN ?? 'https://skycubeuk.github.io';
+
+// Validate PORT at startup so a bad value fails loudly.
+const port = Number(PORT);
+if (!Number.isInteger(port) || port < 1 || port > 65535) {
+  console.error(`Invalid PORT value: "${PORT}" — must be an integer between 1 and 65535`);
+  process.exit(1);
+}
+
 // In-memory CSRF state store (state → timestamp). Entries expire after 10 minutes.
 const pendingStates = new Map<string, number>();
 const STATE_TTL_MS = 10 * 60 * 1000;
+// Hard cap prevents memory exhaustion if /auth is flooded without matching /callback calls.
+const MAX_PENDING_STATES = 500;
 
 function pruneExpiredStates(): void {
   const now = Date.now();
@@ -26,12 +42,31 @@ function pruneExpiredStates(): void {
 }
 
 /**
+ * Serialises `value` as JSON safe for embedding directly inside a <script> block.
+ *
+ * JSON.stringify does NOT escape '<', '>', or '&', so a string containing
+ * "</script>" would break out of the script tag and allow XSS. Replacing with
+ * their Unicode escapes produces valid JSON that is inert in HTML context.
+ */
+function safeJsonForHtml(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026');
+}
+
+/**
  * GET /auth
  * Decap CMS redirects the user here to begin the GitHub OAuth flow.
  * Query params forwarded by Decap: site_id, scope
  */
 app.get('/auth', (_req: Request, res: Response) => {
   pruneExpiredStates();
+
+  if (pendingStates.size >= MAX_PENDING_STATES) {
+    res.status(429).send('Too many pending authorisations. Try again later.');
+    return;
+  }
 
   const state = randomBytes(16).toString('hex');
   pendingStates.set(state, Date.now());
@@ -52,6 +87,8 @@ app.get('/auth', (_req: Request, res: Response) => {
  * it back to the Decap CMS opener window via postMessage.
  */
 app.get('/callback', async (req: Request, res: Response) => {
+  pruneExpiredStates();
+
   const { code, state, error, error_description } = req.query as Record<string, string | undefined>;
 
   if (error) {
@@ -105,20 +142,25 @@ app.get('/callback', async (req: Request, res: Response) => {
 function sendMessage(res: Response, status: 'success' | 'error', content: string): void {
   const message = `authorization:github:${status}:${content}`;
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  // Restrict the page to only what it needs: one inline script, no external resources.
+  res.setHeader('Content-Security-Policy', "default-src 'none'; script-src 'unsafe-inline'");
   res.send(`<!doctype html>
 <html>
   <head><meta charset="utf-8" /><title>Authenticating…</title></head>
   <body>
     <script>
       (function () {
+        var ALLOWED_ORIGIN = ${safeJsonForHtml(CMS_ORIGIN)};
         function onMessage(e) {
-          if (e.data === 'authorizing:github') {
+          // Only accept the handshake from the expected CMS origin.
+          if (e.origin === ALLOWED_ORIGIN && e.data === 'authorizing:github') {
             window.removeEventListener('message', onMessage);
-            window.opener.postMessage(${JSON.stringify(message)}, e.origin);
+            window.opener.postMessage(${safeJsonForHtml(message)}, ALLOWED_ORIGIN);
           }
         }
         window.addEventListener('message', onMessage);
-        window.opener.postMessage('authorizing:github', '*');
+        // Announce readiness only to the known CMS origin (not '*').
+        window.opener.postMessage('authorizing:github', ALLOWED_ORIGIN);
       })();
     </script>
   </body>
@@ -130,6 +172,6 @@ app.use((_req: Request, res: Response) => {
   res.redirect(301, 'https://skycubeuk.github.io');
 });
 
-app.listen(Number(PORT), () => {
-  console.log(`OAuth proxy listening on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`OAuth proxy listening on port ${port}`);
 });

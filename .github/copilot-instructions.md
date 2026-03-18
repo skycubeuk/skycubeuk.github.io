@@ -12,7 +12,7 @@ There are no tests or linters configured. Run `npm run build` to catch type/sche
 
 ## Architecture
 
-Static site built with **Astro v6**, **Tailwind CSS v4**, deployed to **Netlify** on every push to `main`. Content is also editable via **Decap CMS** at `/admin` (Netlify Identity + Git Gateway).
+Static site built with **Astro v6**, **Tailwind CSS v4**, deployed to **GitHub Pages** via GitHub Actions on every push to `main`. Content is also editable via **Decap CMS** at `/admin` (GitHub backend + self-hosted OAuth proxy at `cms.skycube.me.uk`).
 
 ### Content Collections (`src/content/`)
 
@@ -48,7 +48,7 @@ Rendered markdown always uses this Tailwind Typography class string: `prose pros
 
 ### Layouts
 
-- `src/layouts/Base.astro` — full HTML shell with nav, footer, Netlify Identity widget, and mobile menu
+- `src/layouts/Base.astro` — full HTML shell with nav, footer, and mobile menu
 - `src/layouts/Post.astro` — wraps Base for news post pages
 
 ### Components
@@ -91,4 +91,4 @@ Extends `astro/tsconfigs/strict` — strict mode is enforced. Type annotations a
 1. Add it to the Zod schema in `src/content.config.ts`
 2. Add the corresponding widget to `public/admin/config.yml`
 
-The CMS `media_folder` is `public/img` and `public_folder` is `/img`. When switching to the production domain (`wychowlab.org`), update both `site_url`/`display_url`/`logo_url` in `public/admin/config.yml` **and** `site` in `astro.config.mjs`.
+The CMS `media_folder` is `public/img` and `public_folder` is `/img`. When switching to the production domain (`wychowlab.org`), update both `site_url`/`display_url`/`logo_url` in `public/admin/config.yml` **and** `site` in `astro.config.mjs`. Also add a `public/CNAME` file containing `wychowlab.org` for GitHub Pages custom domain support.

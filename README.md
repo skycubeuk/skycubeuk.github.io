@@ -2,13 +2,13 @@
 
 The website for the **WY Chow Lab** at the University of Warwick — a solid-state NMR research group using magnetic resonance to study biomolecules in the extracellular matrix.
 
-🌐 **Live site:** [https://jovial-profiterole-aed202.netlify.app](https://jovial-profiterole-aed202.netlify.app)
+🌐 **Live site:** [https://skycubeuk.github.io](https://skycubeuk.github.io)
 
 ---
 
 ## How it works
 
-The site is built with [Astro](https://astro.build) and deployed automatically to [Netlify](https://netlify.com) on every push to `main`. Content is managed through a web-based CMS — no coding required for day-to-day edits.
+The site is built with [Astro](https://astro.build) and deployed automatically to [GitHub Pages](https://pages.github.com) on every push to `main` via GitHub Actions. Content is managed through a web-based CMS — no code editor or terminal required for day-to-day edits.
 
 ### Tech stack
 
@@ -16,35 +16,38 @@ The site is built with [Astro](https://astro.build) and deployed automatically t
 |-------|-----------|
 | Framework | [Astro v6](https://astro.build) — static site generator |
 | Styling | [Tailwind CSS v4](https://tailwindcss.com) |
-| CMS | [Decap CMS](https://decapcms.org) with Netlify Identity |
-| Hosting | [Netlify](https://netlify.com) (free tier) |
-| Authentication | Netlify Identity + Git Gateway |
+| CMS | [Decap CMS](https://decapcms.org) with GitHub backend |
+| Hosting | [GitHub Pages](https://pages.github.com) (free, via `skycubeuk/skycubeuk.github.io`) |
+| CI/CD | GitHub Actions (`.github/workflows/deploy.yml`) |
+| CMS Authentication | Self-hosted GitHub OAuth proxy (`proxy/`) at `cms.skycube.me.uk` |
 
 ### Editing content (non-technical)
 
 All content can be edited at **`/admin`** on the live site:
 
 1. Go to the site URL + `/admin`
-2. Log in with your email and password (set when you accepted the invite)
+2. Log in with your **GitHub account** (you need read/write access to the repo)
 3. Edit people, posts, projects, or publications using the web forms
-4. Click **Publish** — changes are committed to GitHub automatically and the site rebuilds within ~2 minutes
+4. Click **Save** — this opens a pull request on GitHub; merge it to publish
 
-No GitHub account, no code editor, no terminal required.
+A GitHub account with access to the `skycubeuk/skycubeuk.github.io` repository is required.
 
 ### How deployments work
 
 ```
-Edit in /admin  ──or──  git push
-        ↓                    ↓
-Decap CMS commits      Code pushed to
-to GitHub              GitHub (main)
-        └──────┬────────────┘
-               ↓
-    Netlify detects new commit
-               ↓
-    Builds site (npm run build)
-               ↓
-    Site live in ~2 minutes
+Edit in /admin  ──or──  git push / merge PR
+        ↓                         ↓
+Decap CMS opens a PR         Code pushed to
+on GitHub                    GitHub (main)
+        └──────────┬──────────────┘
+                   ↓
+       GitHub Actions detects new commit
+                   ↓
+       Builds site (npm run build)
+                   ↓
+       Deploys to GitHub Pages
+                   ↓
+       Site live in ~1–2 minutes
 ```
 
 ---
@@ -89,6 +92,15 @@ npm run preview
 
 ```
 wychowlab-web-v2/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml          # GitHub Actions: build + deploy to GitHub Pages
+├── proxy/                      # Self-hosted GitHub OAuth proxy for Decap CMS
+│   ├── src/index.ts            # Express app — /auth and /callback endpoints
+│   ├── Dockerfile
+│   ├── docker-compose.yml
+│   ├── docker-compose.override.yml.example  # Traefik labels template
+│   └── .env.example
 ├── public/
 │   ├── admin/
 │   │   ├── index.html          # Decap CMS admin panel
@@ -123,7 +135,6 @@ wychowlab-web-v2/
 │   └── styles/
 │       └── global.css          # Tailwind + custom theme
 ├── astro.config.mjs
-├── netlify.toml                # Netlify build config
 └── DEPLOYMENT.md               # Full deployment guide
 ```
 
@@ -132,9 +143,9 @@ wychowlab-web-v2/
 ## Deployment
 
 See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for the full guide including:
-- Deploying to Netlify
-- Enabling Netlify Identity for the CMS
-- Inviting editors
+- How GitHub Actions builds and deploys to GitHub Pages
+- Setting up the GitHub OAuth proxy for CMS login
+- Giving editors access to the CMS
 - Adding a custom domain (wychowlab.org)
 
 ---

@@ -5,67 +5,62 @@
 | Item | Status | Details |
 |------|--------|---------|
 | GitHub repo | ✅ Live | `skycubeuk/skycubeuk.github.io` |
-| Netlify hosting | ✅ Live | Auto-deploys on every push to `main` |
-| Preview URL | ✅ Live | https://jovial-profiterole-aed202.netlify.app |
-| Netlify Identity | ✅ Enabled | Invite-only registration |
-| Git Gateway | ✅ Enabled | CMS can commit to GitHub |
-| CMS editor | ✅ Working | https://jovial-profiterole-aed202.netlify.app/admin |
+| GitHub Pages | ✅ Live | Auto-deploys on every push/merge to `main` |
+| Live URL | ✅ Live | https://skycubeuk.github.io |
+| GitHub Actions | ✅ Live | `.github/workflows/deploy.yml` (build + deploy) |
+| OAuth proxy | ✅ Live | https://cms.skycube.me.uk (Docker + Traefik on VPS) |
+| CMS editor | ✅ Working | https://skycubeuk.github.io/admin |
 | Custom domain | ⏳ Pending | Switch to `wychowlab.org` when ready |
 
 ---
 
-## Inviting new editors
+## Giving editors CMS access
 
-Anyone you want to give CMS access to needs an invite:
+The CMS uses GitHub for authentication. Anyone who needs to edit content must:
 
-1. Go to: https://app.netlify.com/projects/jovial-profiterole-aed202/configuration/identity
-2. Click **Invite users**
-3. Enter their email address — they'll receive a link to set a password
-4. Once they've set a password they can log in at `/admin` — no GitHub account needed
+1. Have a GitHub account
+2. Be granted **write access** to the `skycubeuk/skycubeuk.github.io` repository:
+   - Go to the repo → **Settings → Collaborators and teams → Add people**
+   - Enter their GitHub username and set role to **Write**
+   - They'll receive a GitHub invitation email — they must accept it
 
-> **Note:** After clicking the invite link, a popup will appear on the homepage asking them to set a password. If they don't see it, ask them to try the link again in a fresh browser tab.
+Once they have write access, they can log in at `https://skycubeuk.github.io/admin` using the **"Login with GitHub"** button.
+
+> **Note:** The CMS runs in editorial workflow mode — edits create a pull request rather than committing directly to `main`. Editors click **Publish** in the CMS to create the PR, and someone with repo access must merge it to make changes live.
 
 ---
 
 ## Day-to-day editing
 
-Editors visit **https://jovial-profiterole-aed202.netlify.app/admin**, log in with email + password, and edit content through web forms. No coding required.
+Editors visit **https://skycubeuk.github.io/admin**, log in with their GitHub account, and edit content through web forms.
 
 ```
-Editor visits /admin → logs in → edits content → clicks Publish
+Editor visits /admin → logs in with GitHub → edits content → clicks Publish
         ↓
-Decap CMS commits the change to GitHub automatically
+Decap CMS opens a pull request on GitHub
         ↓
-Netlify detects the new commit and rebuilds the site (~2 minutes)
+A maintainer merges the PR
         ↓
-Updated site is live
+GitHub Actions builds the site (npm run build)
+        ↓
+GitHub Pages serves the updated site (~1–2 minutes after merge)
 ```
 
 ---
 
 ## Switching to the production domain (wychowlab.org)
 
-When you're happy with the preview site and ready to go live on `wychowlab.org`:
+When you're ready to go live on `wychowlab.org`:
 
-### Step 1 — Add the domain in Netlify
+### Step 1 — Add a CNAME file
 
-1. Go to https://app.netlify.com/projects/jovial-profiterole-aed202/domain-management
-2. Click **Add a domain**
-3. Enter `wychowlab.org` and follow the verification steps
-4. Tick **Force HTTPS** once the domain is verified
+Create `public/CNAME` containing just the domain (no `https://`):
 
-### Step 2 — Update DNS records
+```
+wychowlab.org
+```
 
-In your domain registrar (wherever you manage `wychowlab.org`), set:
-
-| Type | Name | Value |
-|------|------|-------|
-| `A` | `@` | `75.2.60.5` |
-| `CNAME` | `www` | `jovial-profiterole-aed202.netlify.app` |
-
-DNS changes can take up to 24 hours to propagate.
-
-### Step 3 — Update the site config
+### Step 2 — Update the site config
 
 In `astro.config.mjs`, change the `site` line:
 ```js
@@ -79,7 +74,75 @@ display_url: https://www.wychowlab.org
 logo_url: https://www.wychowlab.org/img/logo.png
 ```
 
-Commit and push — Netlify rebuilds automatically with the new URLs.
+### Step 3 — Configure the custom domain in GitHub
+
+1. Go to the repo → **Settings → Pages**
+2. Under **Custom domain**, enter `wychowlab.org` and click **Save**
+3. Tick **Enforce HTTPS** once the certificate is provisioned
+
+### Step 4 — Update DNS records
+
+In your domain registrar (wherever you manage `wychowlab.org`), set:
+
+| Type | Name | Value |
+|------|------|-------|
+| `A` | `@` | `185.199.108.153` |
+| `A` | `@` | `185.199.109.153` |
+| `A` | `@` | `185.199.110.153` |
+| `A` | `@` | `185.199.111.153` |
+| `CNAME` | `www` | `skycubeuk.github.io` |
+
+DNS changes can take up to 24 hours to propagate. GitHub Pages will automatically provision an HTTPS certificate once DNS resolves.
+
+### Step 5 — Commit and push
+
+Commit the `CNAME` file and config changes — GitHub Actions will rebuild and deploy.
+
+---
+
+## OAuth proxy
+
+The CMS authentication is handled by a self-hosted GitHub OAuth proxy in the `proxy/` folder. It runs on a VPS at `cms.skycube.me.uk` using Docker and Traefik for TLS termination.
+
+### What it does
+
+Decap CMS cannot exchange OAuth codes for tokens directly (no server-side secret storage in a static site). The proxy provides two endpoints:
+
+- `GET /auth` — redirects the user to GitHub's OAuth authorisation page
+- `GET /callback` — receives the code from GitHub, exchanges it for an access token, and returns it to the CMS popup window via `postMessage`
+
+### Deploying / updating the proxy
+
+```bash
+# On the VPS, in the proxy directory
+git pull                        # get latest code
+docker compose build            # rebuild the image
+docker compose up -d            # restart the container
+```
+
+### First-time proxy setup on a new VPS
+
+1. Create a GitHub OAuth App:
+   - Go to **GitHub → Settings → Developer settings → OAuth Apps → New OAuth App**
+   - Homepage URL: `https://skycubeuk.github.io`
+   - Authorization callback URL: `https://cms.skycube.me.uk/callback`
+   - Copy the Client ID and generate a Client Secret
+
+2. Copy `.env.example` to `.env` and fill in `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET`
+
+3. Copy `docker-compose.override.yml.example` to `docker-compose.override.yml` and update the Traefik labels for your domain and certresolver
+
+4. Make sure the `proxy` Docker network exists and Traefik is attached to it:
+   ```bash
+   docker network create proxy
+   ```
+
+5. Start the proxy:
+   ```bash
+   docker compose up -d
+   ```
+
+> **Important:** `ALLOWED_ORIGIN` must exactly match the scheme + host of your live site (e.g. `https://skycubeuk.github.io`). The proxy pins postMessage communication to this origin — mismatched values will break CMS login.
 
 ---
 
@@ -102,22 +165,25 @@ npm run build
 
 ## Troubleshooting
 
-**Build fails on Netlify**
-Go to https://app.netlify.com/projects/jovial-profiterole-aed202/deploys and click the failed deploy to see the full build log.
+**Build fails on GitHub Actions**
+Go to the repo → **Actions** tab → click the failed run to see the full build log.
 
-**CMS invite email link doesn't show a password form**
-The Netlify Identity widget must be loaded on the page. Make sure the deploy is complete before clicking the link. Try opening the link in a fresh browser tab (not an email preview pane).
-
-**CMS shows "Error: Failed to persist entry"**
-Check that Git Gateway is enabled:
-https://app.netlify.com/projects/jovial-profiterole-aed202/configuration/identity
-→ scroll to **Services → Git Gateway**
+**CMS shows "Login with GitHub" but clicking it does nothing / errors**
+Check that the OAuth proxy at `https://cms.skycube.me.uk` is running:
+```bash
+curl https://cms.skycube.me.uk/auth
+# Should redirect (302) to github.com
+```
+If it's down, SSH to the VPS and run `docker compose up -d` in the `proxy/` directory.
 
 **CMS shows "No entries" for People or Publications**
 These collections use `.yaml` files. The config has `extension: yaml` and `format: yaml` set — if this is ever reset, that's the fix.
 
-**Custom domain shows "not secure"**
-HTTPS provisioning can take up to 24 hours after DNS propagates — check back later.
+**CMS edits don't appear on the site after merging a PR**
+Check the Actions tab — the build may still be in progress (~1–2 minutes) or may have failed.
 
-**Site not updating after a push or CMS edit**
-Check the Deploys tab — the build may still be in progress (usually takes ~2 minutes).
+**Custom domain shows "not secure"**
+HTTPS certificate provisioning can take up to 24 hours after DNS propagates — check back later. Verify DNS is set correctly at https://dnschecker.org.
+
+**Site not updating after a push**
+Check the Actions tab — the build may still be running, or may have failed with an error.
