@@ -125,6 +125,11 @@ function sendMessage(res: Response, status: 'success' | 'error', content: string
 </html>`);
 }
 
+// Redirect root and any unknown route to the main site — hides the proxy's existence.
+app.use((_req: Request, res: Response) => {
+  res.redirect(301, 'https://skycubeuk.github.io');
+});
+
 app.listen(Number(PORT), () => {
   console.log(`OAuth proxy listening on port ${PORT}`);
 });
