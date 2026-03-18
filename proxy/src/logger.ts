@@ -30,3 +30,14 @@ export function log(event: string, fields: Record<string, string> = {}): void {
   const entry = JSON.stringify({ timestamp: new Date().toISOString(), event, ...fields });
   stream.write(entry + '\n');
 }
+
+/**
+ * Flushes and closes the audit log write stream.
+ * Call this during graceful shutdown to ensure the last entries are flushed to disk.
+ */
+export function closeLogger(): void {
+  if (stream) {
+    stream.end();
+    stream = null;
+  }
+}

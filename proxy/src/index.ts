@@ -1,10 +1,10 @@
 import express, { type Request, type Response } from 'express';
 import { randomBytes } from 'node:crypto';
-import { log } from './logger.js';
+import { log, closeLogger } from './logger.js';
 
 const app = express();
 
-// Trust the first proxy (Traefik) so req.ip reflects the real client IP
+// Trust the first proxy hop so req.ip reflects the real client IP
 // rather than the container's internal address.
 app.set('trust proxy', 1);
 
@@ -13,6 +13,7 @@ const {
   GITHUB_CLIENT_SECRET: CLIENT_SECRET,
   GITHUB_REPO,
   ALLOWED_ORIGIN,
+  GITHUB_SCOPE = 'public_repo',
   PORT = '3000',
 } = process.env;
 
@@ -22,15 +23,16 @@ if (!CLIENT_ID || !CLIENT_SECRET) {
 }
 
 if (!GITHUB_REPO) {
-  console.error('Missing required env var: GITHUB_REPO (e.g. skycubeuk/skycubeuk.github.io)');
+  console.error('Missing required env var: GITHUB_REPO (e.g. owner/repo)');
   process.exit(1);
 }
 
 if (!ALLOWED_ORIGIN) {
-  console.warn('Warning: ALLOWED_ORIGIN env var not set. Defaulting to https://skycubeuk.github.io');
+  console.error('Missing required env var: ALLOWED_ORIGIN (e.g. https://your-site.example.com)');
+  process.exit(1);
 }
 
-const CMS_ORIGIN = ALLOWED_ORIGIN ?? 'https://skycubeuk.github.io';
+const CMS_ORIGIN = ALLOWED_ORIGIN;
 
 // Validate PORT at startup so a bad value fails loudly.
 const port = Number(PORT);
@@ -87,7 +89,7 @@ app.get('/auth', (_req: Request, res: Response) => {
 
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
-    scope: 'public_repo',
+    scope: GITHUB_SCOPE,
     state,
   });
 
@@ -196,10 +198,6 @@ app.get('/callback', async (req: Request, res: Response) => {
 });
 
 /**
- * Sends the result back to the Decap CMS popup window via postMessage.
- * Format expected by Decap: "authorization:github:success:{...}" or "authorization:github:error:..."
- */
-/**
  * Escapes a string for safe inclusion as HTML text content.
  */
 function escapeHtml(str: string): string {
@@ -211,6 +209,10 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#39;');
 }
 
+/**
+ * Sends the result back to the Decap CMS popup window via postMessage.
+ * Format expected by Decap: "authorization:github:success:{...}" or "authorization:github:error:..."
+ */
 function sendMessage(res: Response, status: 'success' | 'error', content: string): void {
   const message = `authorization:github:${status}:${content}`;
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
@@ -262,11 +264,25 @@ function sendMessage(res: Response, status: 'success' | 'error', content: string
 </html>`);
 }
 
-// Redirect root and any unknown route to the main site — hides the proxy's existence.
-app.use((_req: Request, res: Response) => {
-  res.redirect(301, 'https://skycubeuk.github.io');
+// Health check — for Docker health checks and reverse-proxy probes.
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({ status: 'ok' });
 });
 
-app.listen(port, () => {
+// Redirect root and any unknown route to the CMS site — hides the proxy's existence.
+app.use((_req: Request, res: Response) => {
+  res.redirect(301, CMS_ORIGIN);
+});
+
+const server = app.listen(port, () => {
   console.log(`OAuth proxy listening on port ${port}`);
+});
+
+// Graceful shutdown: flush the audit log before exiting.
+process.on('SIGTERM', () => {
+  console.log('Received SIGTERM, shutting down gracefully…');
+  server.close(() => {
+    closeLogger();
+    process.exit(0);
+  });
 });
