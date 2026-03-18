@@ -112,6 +112,19 @@ View the live log:
 docker compose exec oauth-proxy tail -f /app/logs/auth.log
 ```
 
+The log file grows indefinitely — set up [`logrotate`](https://linux.die.net/man/8/logrotate) on your host to manage it. A minimal config (`/etc/logrotate.d/decap-oauth-proxy`):
+
+```
+/var/lib/docker/volumes/*/auth.log {
+    daily
+    rotate 30
+    compress
+    missingok
+    notifempty
+    copytruncate
+}
+```
+
 ---
 
 ## Reverse-proxy setup
@@ -120,19 +133,26 @@ The container exposes port `3000` over plain HTTP. Your reverse proxy handles TL
 
 ### Traefik (Docker labels)
 
-Add to `docker-compose.yml` under `services.oauth-proxy`:
+If Traefik discovers containers via a shared Docker network, remove the `ports:` mapping from `docker-compose.yml` and add the network + labels instead:
 
 ```yaml
-labels:
-  - "traefik.enable=true"
-  - "traefik.http.routers.oauth-proxy.rule=Host(`cms.example.com`)"
-  - "traefik.http.routers.oauth-proxy.entrypoints=websecure"
-  - "traefik.http.routers.oauth-proxy.tls=true"
-  - "traefik.http.routers.oauth-proxy.tls.certresolver=letsencrypt"
-  - "traefik.http.services.oauth-proxy.loadbalancer.server.port=3000"
-```
+services:
+  oauth-proxy:
+    # ... (remove ports:)
+    networks:
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.oauth-proxy.rule=Host(`cms.example.com`)"
+      - "traefik.http.routers.oauth-proxy.entrypoints=websecure"
+      - "traefik.http.routers.oauth-proxy.tls=true"
+      - "traefik.http.routers.oauth-proxy.tls.certresolver=letsencrypt"
+      - "traefik.http.services.oauth-proxy.loadbalancer.server.port=3000"
 
-Also remove the `ports:` mapping from `docker-compose.yml` — Traefik reaches the container over the Docker network directly.
+networks:
+  proxy:
+    external: true
+```
 
 ### Caddy
 

@@ -7,13 +7,7 @@ services:
       - "3000:3000"
     volumes:
       - proxy-logs:/app/logs
-    networks:
-      - proxy
 
 volumes:
   proxy-logs:
-
-networks:
-  proxy:
-    external: true
 

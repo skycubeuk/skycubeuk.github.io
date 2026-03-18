@@ -27,8 +27,22 @@ if (!GITHUB_REPO) {
   process.exit(1);
 }
 
+if (!/^[^/\s]+\/[^/?#\s]+$/.test(GITHUB_REPO)) {
+  console.error(
+    `Invalid GITHUB_REPO: "${GITHUB_REPO}" — must be in owner/repo format (e.g. myorg/myrepo)`,
+  );
+  process.exit(1);
+}
+
 if (!ALLOWED_ORIGIN) {
   console.error('Missing required env var: ALLOWED_ORIGIN (e.g. https://your-site.example.com)');
+  process.exit(1);
+}
+
+if (!ALLOWED_ORIGIN.startsWith('https://') || ALLOWED_ORIGIN.endsWith('/')) {
+  console.error(
+    `Invalid ALLOWED_ORIGIN: "${ALLOWED_ORIGIN}" — must start with https:// and have no trailing slash`,
+  );
   process.exit(1);
 }
 
@@ -109,8 +123,9 @@ app.get('/callback', async (req: Request, res: Response) => {
   const { code, state, error, error_description } = req.query as Record<string, string | undefined>;
 
   if (error) {
-    log('auth_error', { ip, error: String(error), error_description: String(error_description ?? '') });
-    return sendMessage(res, 'error', String(error_description ?? error));
+    const desc = String(error_description ?? error).slice(0, 200);
+    log('auth_error', { ip, error: String(error), error_description: desc });
+    return sendMessage(res, 'error', desc);
   }
 
   if (!state || !pendingStates.has(state)) {
@@ -247,6 +262,7 @@ function sendMessage(res: Response, status: 'success' | 'error', content: string
     ${errorHtml}
     <script>
       (function () {
+        if (!window.opener) return;
         var ALLOWED_ORIGIN = ${safeJsonForHtml(CMS_ORIGIN)};
         function onMessage(e) {
           // Only accept the handshake from the expected CMS origin.
