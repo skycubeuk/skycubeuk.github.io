@@ -1,0 +1,20 @@
+# Cover image metadata for publications.
+# This file is the source of truth for cover images — it is merged into
+# each generated YAML by scripts/bib-to-yaml.mjs.
+#
+# Add an entry here when a paper has a journal cover associated with it:
+#
+#   CitationKey:
+#     isCover: true
+#     coverImage: /img/covers/Filename.jpg
+#     coverThumb: /img/covers/thumbs/Filename.jpg
+
+Goldberga2019:
+  isCover: true
+  coverImage: /img/covers/Chow2018.jpg
+  coverThumb: /img/covers/thumbs/Chow2018.jpg
+
+Chow2020:
+  isCover: true
+  coverImage: /img/covers/Chow2020.jpg
+  coverThumb: /img/covers/thumbs/Chow2020.jpg

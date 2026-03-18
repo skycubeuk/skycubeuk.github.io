@@ -1,6 +1,9 @@
-title: "Poly(ADP-Ribose) Links the DNA Damage Response and Biomineralization"
-authors: "Wing Ying Chow, Ren Rui Liao, Melinda J. Duer"
-journal: "Cell Chemical Biology"
+title: Investigation of Triple-Helix Collagen Hydroxylation by Solid-State NMR Spectroscopy
+authors: Wing Ying Chow
+journal: Methods in Molecular Biology
 year: 2019
-doi: "10.1016/j.chembiol.2019.04.004"
-isCover: false
+doi: 10.1007/978-1-4939-9095-5_5
+url: http://www.ncbi.nlm.nih.gov/pubmed/30840235 http://link.springer.com/10.1007/978-1-4939-9095-5_5
+abstract: Solid-state nuclear magnetic resonance spectroscopy (ssNMR) is an emerging technique in structural methods of studying collagen proteins, capable of identifying features on an atomic length scale in tissues and protein samples without extensive extraction or purification. Hydroxylation is a key posttranslational modification of collagen that gives rise to distinctive signals in the ssNMR spectrum of collagen proteins. Here we outline the type of information that ssNMR can provide and describe the procedures involved in a ssNMR structural study, with particular focus on using dynamic nuclear polarization to enhance sensitivity for detecting hydroxylysine residues by ssNMR.
+volume: "1944"
+pages: 57–77

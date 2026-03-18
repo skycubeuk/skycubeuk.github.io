@@ -1,6 +1,9 @@
-title: "Hydroxyproline Ring Pucker Causes Frustration of Helix Parameters in the Collagen Triple Helix"
-authors: "Wing Ying Chow, Rakesh Rajan, Kevin H. Muller, David G. Reid, Jeremy N. Skepper, Wai Ching Wong, Rosa Brooks, Martin Green, Melinda J. Duer"
-journal: "Journal of Physical Chemistry B"
+title: NMR Spectroscopy of Native and in Vitro Tissues Implicates PolyADP Ribose in Biomineralization
+authors: Wing Ying Chow, Rakesh Rajan, Karin H. Muller, David G. Reid, Jeremy N. Skepper, Wai Ching Wong, Roger A. Brooks, Maggie Green, Dominique Bihan, Richard W. Farndale, David A. Slatter, Cathy M. Shanahan, Melinda J. Duer
+journal: Science
 year: 2014
-doi: "10.1021/jp5015134"
-isCover: false
+doi: 10.1126/science.1248167
+url: https://www.science.org/doi/10.1126/science.1248167
+abstract: Nuclear magnetic resonance (NMR) spectroscopy is useful to determine molecular structure in tissues grown in vitro only if their fidelity, relative to native tissue, can be established. Here, we use multidimensional NMR spectra of animal and in vitro model tissues as fingerprints of their respective molecular structures, allowing us to compare the intact tissues at atomic length scales. To obtain spectra from animal tissues, we developed a heavy mouse enriched by about 20% in the NMR-active isotopes carbon-13 and nitrogen-15. The resulting spectra allowed us to refine an in vitro model of developing bone and to probe its detailed structure. The identification of an unexpected molecule, poly(adenosine diphosphate ribose), that may be implicated in calcification of the bone matrix, illustrates the analytical power of this approach.
+volume: "344"
+pages: 742–746

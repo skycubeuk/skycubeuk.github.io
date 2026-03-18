@@ -9,7 +9,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "sync-pubs": "node scripts/bib-to-yaml.mjs",
+    "prebuild": "node scripts/bib-to-yaml.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.1",
@@ -18,6 +20,8 @@
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
-    "@tailwindcss/typography": "^0.5.19"
+    "@tailwindcss/typography": "^0.5.19",
+    "bibtex-parse": "^2.1.0",
+    "yaml": "^2.8.2"
   }
 }

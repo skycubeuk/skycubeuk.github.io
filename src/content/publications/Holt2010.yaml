@@ -1,6 +1,9 @@
-title: "NMR Spectroscopy of Native and in Vitro Tissues Implicates PolyADP Ribose in Biomineralization"
-authors: "Vicky P. Holt, Wing Ying Chow, David G. Reid, Melinda J. Duer"
-journal: "Chemical Communications"
+title: "Fluorosurfactants for microdroplets: interfacial tension analysis."
+authors: Daniel J Holt, Richard J Payne, Wing Ying Chow, Chris Abell
+journal: Journal of Colloid and Interface Science
 year: 2010
-doi: "10.1039/b924568b"
-isCover: false
+doi: 10.1016/j.jcis.2010.06.036
+url: http://www.ncbi.nlm.nih.gov/pubmed/20638074
+abstract: Quantitative analysis of a number of potential fluorous surfactants, prepared with a view to stabilisation of microdroplets in microfluidic systems is presented. The surfactants tested comprised compounds with both perfluoropolyether (PFPE) and perfluoroalkyl (PFA) tails, along with three classes of hydrophilic head group, including crown ethers and hexaethylene gylcol. Surfactants were tested for activity using the pendant drop technique. Six compounds proved highly effective and efficient surfactants, with gamma(CMC)<10 mN/m and CMCs in the sub-millimolar range. These six compounds stabilised aqueous microdroplets in fluorous oils within poly(dimethylsiloxane) (PDMS) microdevices to a greater degree than commonly used pseudosurfactants such as perfluorooctanol.
+volume: "350"
+pages: 205–11

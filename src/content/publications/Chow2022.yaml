@@ -1,7 +1,7 @@
-title: "Biomolecular and Biological Applications of Solid-State NMR with Dynamic Nuclear Polarization Enhancement"
-authors: "Wing Ying Chow"
-journal: "Progress in Nuclear Magnetic Resonance Spectroscopy"
+title: Biomolecular and Biological Applications of Solid-State NMR with Dynamic Nuclear Polarization Enhancement
+authors: Wing Ying Chow, Gaël De Paëpe, Sabine Hediger
+journal: Chemical Reviews
 year: 2022
-doi: "10.1016/j.pnmrs.2022.04.002"
-abstract: "Solid-state NMR (ssNMR) with dynamic nuclear polarization (DNP) enhancement is a rapidly developing technique that has found a growing number of applications in the study of biological and biomolecular systems."
-isCover: false
+doi: 10.1021/acs.chemrev.1c01043
+url: https://pubs.acs.org/doi/10.1021/acs.chemrev.1c01043
+abstract: Solid-state NMR spectroscopy (ssNMR) with magic-angle spinning (MAS) enables the investigation of biological systems within their native context, such as lipid membranes, viral capsid assemblies, and cells. However, such ambitious investigations often suffer from low sensitivity due to the presence of significant amounts of other molecular species, which reduces the effective concentration of the biomolecule or interaction of interest. Certain investigations requiring the detection of very low concentration species remain unfeasible even with increasing experimental time for signal averaging. By applying dynamic nuclear polarization (DNP) to overcome the sensitivity challenge, the experimental time required can be reduced by orders of magnitude, broadening the feasible scope of applications for biological solid-state NMR. In this review, we outline strategies commonly adopted for biological applications of DNP, indicate ongoing challenges, and present a comprehensive overview of biological investigations where MAS-DNP has led to unique insights.
