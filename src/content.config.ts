@@ -47,8 +47,9 @@ const people = defineCollection({
 });
 
 const publications = defineCollection({
-  loader: glob({ pattern: '[^_]*.yaml', base: './src/content/publications' }),
+  loader: glob({ pattern: '**/*.yaml', base: './src/content/publications' }),
   schema: z.object({
+    key: z.string().optional(),
     title: z.string(),
     authors: z.string(),
     journal: z.string(),

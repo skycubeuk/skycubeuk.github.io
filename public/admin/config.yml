@@ -144,16 +144,40 @@ collections:
     files:
       - name: covers
         label: "Journal Covers"
-        file: src/content/publications/_covers.yaml
+        file: src/content/publication-covers.yaml
         media_folder: /public/img/covers
         public_folder: /img/covers
         fields:
           - label: "Covers"
             name: covers
             widget: list
-            hint: "Each entry links a BibTeX key to its journal cover images. The key must exactly match the key in pubs.bib."
+            hint: "Each entry links a publication to its journal cover images."
             fields:
-              - { label: "BibTeX Citation Key", name: key, widget: string,
-                  hint: "e.g. Chow2020 — must match the BibTeX key exactly" }
+              - label: "Publication"
+                name: key
+                widget: relation
+                collection: publication_list
+                search_fields: ["title", "authors", "year"]
+                value_field: key
+                display_fields: ["{{year}} — {{title}}"]
+                hint: "Search by title or author to find the paper"
               - { label: "Cover Image", name: coverImage, widget: image }
               - { label: "Cover Thumbnail", name: coverThumb, widget: image }
+
+  # ── PUBLICATION LIST (read-only — for the relation widget above) ──────────
+  - name: publication_list
+    label: "Publication List"
+    label_singular: "Publication"
+    folder: src/content/publications
+    create: false
+    delete: false
+    extension: yaml
+    format: yaml
+    identifier_field: key
+    summary: "{{year}} — {{title}}"
+    fields:
+      - { label: "Citation Key", name: key, widget: string }
+      - { label: "Title", name: title, widget: string }
+      - { label: "Year", name: year, widget: number }
+      - { label: "Authors", name: authors, widget: string }
+      - { label: "Journal", name: journal, widget: string }

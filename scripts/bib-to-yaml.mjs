@@ -2,7 +2,7 @@
  * bib-to-yaml.mjs
  *
  * Converts public/bib/pubs.bib → src/content/publications/{key}.yaml
- * Cover image metadata is merged from src/content/publications/_covers.yaml.
+ * Cover image metadata is merged from src/content/publication-covers.yaml.
  *
  * Run: node scripts/bib-to-yaml.mjs
  * Or:  npm run sync-pubs
@@ -23,7 +23,7 @@ const root = join(__dirname, '..');
 
 const BIB_FILE = join(root, 'public', 'bib', 'pubs.bib');
 const PUBS_DIR = join(root, 'src', 'content', 'publications');
-const COVERS_FILE = join(PUBS_DIR, '_covers.yaml');
+const COVERS_FILE = join(root, 'src', 'content', 'publication-covers.yaml');
 
 // ─── LaTeX character decoding ─────────────────────────────────────────────────
 
@@ -108,6 +108,9 @@ function entryToYaml(entry, coverData) {
   const f = (k) => entry[k] ?? null;
 
   const obj = {};
+
+  // Store the citation key for reference and CMS relation widget
+  obj.key = entry.key;
 
   const title = decodeLatex(f('TITLE'));
   if (!title) throw new Error(`Entry ${entry.key} is missing a title`);
