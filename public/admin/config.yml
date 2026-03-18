@@ -166,7 +166,7 @@ collections:
 
   # ── PUBLICATION LIST (read-only — for the relation widget above) ──────────
   - name: publication_list
-    label: "Publication List"
+    label: "Publication List (auto-generated — edit pubs.bib instead)"
     label_singular: "Publication"
     folder: src/content/publications
     create: false
