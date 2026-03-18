@@ -199,15 +199,50 @@ app.get('/callback', async (req: Request, res: Response) => {
  * Sends the result back to the Decap CMS popup window via postMessage.
  * Format expected by Decap: "authorization:github:success:{...}" or "authorization:github:error:..."
  */
+/**
+ * Escapes a string for safe inclusion as HTML text content.
+ */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function sendMessage(res: Response, status: 'success' | 'error', content: string): void {
   const message = `authorization:github:${status}:${content}`;
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  // Restrict the page to only what it needs: one inline script, no external resources.
-  res.setHeader('Content-Security-Policy', "default-src 'none'; script-src 'unsafe-inline'");
+  // Restrict the page to only what it needs: one inline script/style, no external resources.
+  res.setHeader('Content-Security-Policy', "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'");
+
+  // On error, show visible feedback so the user isn't left staring at a blank screen
+  // if the CMS doesn't automatically close the popup.
+  const errorHtml = status === 'error'
+    ? `<style>
+        body { font-family: sans-serif; display: flex; flex-direction: column;
+               align-items: center; justify-content: center; min-height: 100vh;
+               margin: 0; background: #f8f8f8; color: #333; }
+        .box { background: #fff; border: 1px solid #ddd; border-radius: 8px;
+               padding: 2rem; max-width: 360px; text-align: center; }
+        h1 { font-size: 1.1rem; margin: 0 0 .75rem; color: #c00; }
+        p  { font-size: .9rem; margin: 0 0 1.25rem; line-height: 1.5; }
+        button { padding: .5rem 1.25rem; border: none; border-radius: 4px;
+                 background: #333; color: #fff; font-size: .9rem; cursor: pointer; }
+      </style>
+      <div class="box">
+        <h1>Login failed</h1>
+        <p>${escapeHtml(content)}</p>
+        <button onclick="window.close()">Close this window</button>
+      </div>`
+    : '';
+
   res.send(`<!doctype html>
 <html>
   <head><meta charset="utf-8" /><title>Authenticating…</title></head>
   <body>
+    ${errorHtml}
     <script>
       (function () {
         var ALLOWED_ORIGIN = ${safeJsonForHtml(CMS_ORIGIN)};
