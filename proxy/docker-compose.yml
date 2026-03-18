@@ -3,8 +3,8 @@ services:
     build: .
     restart: unless-stopped
     env_file: .env
-    ports:
-      - "3000:3000"
+    networks:
+      - proxy
     # ── Traefik labels ────────────────────────────────────────────────────────
     # Uncomment and customise the block below when deploying behind Traefik.
     # Replace the entrypoint name ("websecure") and certresolver ("letsencrypt")
@@ -18,3 +18,7 @@ services:
     #   - "traefik.http.routers.oauth-proxy.tls.certresolver=letsencrypt"
     #   - "traefik.http.services.oauth-proxy.loadbalancer.server.port=3000"
     # ─────────────────────────────────────────────────────────────────────────
+
+networks:
+  proxy:
+    external: true
