@@ -38,7 +38,7 @@ app.get('/auth', (_req: Request, res: Response) => {
 
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
-    scope: 'repo,user',
+    scope: 'public_repo',
     state,
   });
 
