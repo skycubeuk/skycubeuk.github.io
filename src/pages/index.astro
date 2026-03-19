@@ -165,34 +165,77 @@ for (const grant of grantsForIndex) {
           <h3 class="text-lg font-semibold text-gray-700">Research Students</h3>
           <button class="text-xs text-[#552d62] hover:underline" data-expand-all>Expand all</button>
         </div>
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 items-start">
-          {students.map(p => (
-            <PersonCard
-              name={resolveDisplayName(p.data)}
-              firstName={p.data.firstName}
-              role={p.data.role}
-              roleLabel={p.data.roleLabel}
-              bio={p.data.bio}
-              bioLong={p.data.bioLong}
-              image={p.data.image}
-              webpage={p.data.webpage}
-              twitter={p.data.twitter}
-              mastodon={p.data.mastodon}
-              orcid={p.data.orcid}
-              github={p.data.github}
-              linkedin={p.data.linkedin}
-              bluesky={p.data.bluesky}
-              variant="card"
-            />
+        <div class="flex flex-wrap gap-6">
+          {students.map((p, i) => (
+            <>
+              <div class="w-[calc(50%-12px)] sm:w-[calc(33.333%-16px)] md:w-[calc(20%-19.2px)]" data-card-wrapper data-card-idx={i} style={`order: ${i * 10}`}>
+                <PersonCard
+                  name={resolveDisplayName(p.data)}
+                  firstName={p.data.firstName}
+                  role={p.data.role}
+                  roleLabel={p.data.roleLabel}
+                  bio={p.data.bio}
+                  image={p.data.image}
+                  webpage={p.data.webpage}
+                  twitter={p.data.twitter}
+                  mastodon={p.data.mastodon}
+                  orcid={p.data.orcid}
+                  github={p.data.github}
+                  linkedin={p.data.linkedin}
+                  bluesky={p.data.bluesky}
+                  variant="card"
+                />
+                {p.data.bioLong && (
+                  <div class="flex justify-center mt-2">
+                    <button class="text-xs text-[#552d62] hover:underline" data-expand-btn data-card-idx={i} aria-expanded="false">▼ More</button>
+                  </div>
+                )}
+              </div>
+              {p.data.bioLong && (
+                <div class="w-full hidden" data-drawer data-drawer-idx={i} style={`order: ${i * 10 + 1}`}>
+                  <div class="mt-1 mb-3 bg-gray-50 rounded-xl overflow-hidden border border-gray-100">
+                    <div class="h-0.5 bg-[#552d62]"></div>
+                    <div class="p-5 flex items-start gap-4">
+                      <div class="flex-shrink-0">
+                        {p.data.image ? (
+                          <img src={p.data.image} alt={resolveDisplayName(p.data)} class="w-16 h-16 rounded-full object-cover ring-2 ring-[#552d62]/20" />
+                        ) : (
+                          <div class="w-16 h-16 rounded-full flex items-center justify-center text-xl font-bold text-white bg-[#552d62]">
+                            {(p.data.firstName ?? resolveDisplayName(p.data)).charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-start justify-between gap-4">
+                          <div>
+                            <p class="font-semibold text-gray-900">
+                              {p.data.webpage
+                                ? <a href={p.data.webpage} class="hover:text-[#552d62]">{resolveDisplayName(p.data)}</a>
+                                : resolveDisplayName(p.data)
+                              }
+                            </p>
+                            {p.data.roleLabel && <p class="text-xs text-gray-500 mt-0.5">({p.data.roleLabel})</p>}
+                          </div>
+                          <button data-close-drawer data-drawer-idx={i} class="text-gray-400 hover:text-gray-600 flex-shrink-0 text-xl leading-none" aria-label="Close">×</button>
+                        </div>
+                        <p class="text-sm text-gray-700 leading-relaxed mt-3">{p.data.bioLong}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           ))}
           <!-- You? placeholder -->
-          <div class="flex flex-col items-center text-center gap-2 w-full">
-            <a href="/join" class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-gray-400 hover:bg-[#552d62] hover:text-white transition-colors ring-2 ring-gray-100">?</a>
-            <div>
-              <p class="text-sm font-medium text-gray-500">
-                <a href="/join" class="hover:text-[#552d62]">You?</a>
-              </p>
-              <p class="text-xs text-gray-400">See the Join page!</p>
+          <div class="w-[calc(50%-12px)] sm:w-[calc(33.333%-16px)] md:w-[calc(20%-19.2px)]" style={`order: ${students.length * 10}`}>
+            <div class="flex flex-col items-center text-center gap-2 w-full">
+              <a href="/join" class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-bold text-gray-400 hover:bg-[#552d62] hover:text-white transition-colors ring-2 ring-gray-100">?</a>
+              <div>
+                <p class="text-sm font-medium text-gray-500">
+                  <a href="/join" class="hover:text-[#552d62]">You?</a>
+                </p>
+                <p class="text-xs text-gray-400">See the Join page!</p>
+              </div>
             </div>
           </div>
         </div>
@@ -260,18 +303,94 @@ for (const grant of grantsForIndex) {
 </Base>
 
 <script>
-  document.querySelectorAll('[data-expand-all]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const section = btn.closest('[data-student-section]') as HTMLElement;
-      const bios = section.querySelectorAll('[data-bio-long]');
-      const cardBtns = section.querySelectorAll('[data-expand-btn]');
-      const expanding = btn.textContent?.trim() === 'Expand all';
-      bios.forEach(b => b.classList.toggle('hidden', !expanding));
-      cardBtns.forEach(b => {
-        b.setAttribute('aria-expanded', String(expanding));
-        b.textContent = expanding ? '▲ Less' : '▼ More';
+(function () {
+  document.querySelectorAll<HTMLElement>('[data-student-section]').forEach(section => {
+    const expandAllBtn = section.querySelector<HTMLButtonElement>('[data-expand-all]');
+
+    function cardWrappers(): HTMLElement[] {
+      return [...section.querySelectorAll<HTMLElement>('[data-card-wrapper]')];
+    }
+    function getDrawer(idx: string | number): HTMLElement | null {
+      return section.querySelector<HTMLElement>(`[data-drawer-idx="${idx}"]`);
+    }
+    function rowMates(card: HTMLElement, all: HTMLElement[]): HTMLElement[] {
+      const top = card.getBoundingClientRect().top;
+      return all.filter(c => Math.abs(c.getBoundingClientRect().top - top) < 5);
+    }
+    function rowMaxOrder(cards: HTMLElement[]): number {
+      return Math.max(...cards.map(c => parseInt(c.style.order || '0', 10)));
+    }
+
+    function open(idx: string, closeRow = true): void {
+      const all = cardWrappers();
+      const card = all.find(c => c.dataset.cardIdx === idx);
+      const d = getDrawer(idx);
+      if (!card || !d) return;
+      if (closeRow) {
+        rowMates(card, all).forEach(rc => { if (rc.dataset.cardIdx !== idx) close(rc.dataset.cardIdx!); });
+      }
+      const mates = rowMates(card, all);
+      d.style.order = String(rowMaxOrder(mates) + 1);
+      d.classList.remove('hidden');
+      const btn = card.querySelector<HTMLElement>('[data-expand-btn]');
+      if (btn) { btn.setAttribute('aria-expanded', 'true'); btn.textContent = '▲ Less'; }
+    }
+
+    function close(idx: string): void {
+      const d = getDrawer(idx);
+      if (!d || d.classList.contains('hidden')) return;
+      d.classList.add('hidden');
+      const card = section.querySelector<HTMLElement>(`[data-card-wrapper][data-card-idx="${idx}"]`);
+      const btn = card?.querySelector<HTMLElement>('[data-expand-btn]');
+      if (btn) { btn.setAttribute('aria-expanded', 'false'); btn.textContent = '▼ More'; }
+    }
+
+    section.querySelectorAll<HTMLElement>('[data-expand-btn]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = btn.dataset.cardIdx!;
+        btn.getAttribute('aria-expanded') === 'true' ? close(idx) : open(idx);
       });
-      btn.textContent = expanding ? 'Collapse all' : 'Expand all';
+    });
+    section.querySelectorAll<HTMLElement>('[data-close-drawer]').forEach(btn => {
+      btn.addEventListener('click', () => close(btn.dataset.drawerIdx!));
+    });
+
+    if (expandAllBtn) {
+      expandAllBtn.addEventListener('click', () => {
+        if (expandAllBtn.textContent?.trim() === 'Expand all') {
+          const all = cardWrappers();
+          const withBio = all.filter(c => c.querySelector('[data-expand-btn]'));
+          const orders = new Map<string, number>();
+          withBio.forEach(card => { orders.set(card.dataset.cardIdx!, rowMaxOrder(rowMates(card, all)) + 1); });
+          withBio.forEach(card => {
+            const idx = card.dataset.cardIdx!;
+            const d = getDrawer(idx);
+            if (!d) return;
+            d.style.order = String(orders.get(idx)!);
+            d.classList.remove('hidden');
+            const btn = card.querySelector<HTMLElement>('[data-expand-btn]');
+            if (btn) { btn.setAttribute('aria-expanded', 'true'); btn.textContent = '▲ Less'; }
+          });
+          expandAllBtn.textContent = 'Collapse all';
+        } else {
+          cardWrappers().forEach(c => close(c.dataset.cardIdx!));
+          expandAllBtn.textContent = 'Expand all';
+        }
+      });
+    }
+
+    let resizeTimer: ReturnType<typeof setTimeout>;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        const all = cardWrappers();
+        section.querySelectorAll<HTMLElement>('[data-drawer]:not(.hidden)').forEach(d => {
+          const card = all.find(c => c.dataset.cardIdx === d.dataset.drawerIdx);
+          if (!card) return;
+          d.style.order = String(rowMaxOrder(rowMates(card, all)) + 1);
+        });
+      }, 150);
     });
   });
+})();
 </script>
