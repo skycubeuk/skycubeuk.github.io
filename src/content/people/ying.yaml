@@ -2,6 +2,11 @@ id: ying
 title: "Dr"
 firstName: "Wing Ying"
 lastName: "Chow"
+funding:
+  - 2019-epsrc-past
+  - 2022-example-grant
+  - 2022-royal-society-urf
+  - 2024-epsrc-eds
 role: faculty
 bio: "Assistant Professor, Department of Physics, University of Warwick"
 bioLong: "Ying read Natural Sciences at Cambridge and returned for a PhD in Chemistry, graduating in 2014. She received a DAAD-Leibniz Postdoctoral Fellowship to work with Hartmut Oschkinat in Berlin, Germany. In 2020, she moved to the Interdisciplinary Research Institute of Grenoble to work with Sabine Hediger and Gaël de Paëpe. She started at Warwick in February 2022."

@@ -178,6 +178,12 @@ collections:
       - { label: "Last Name", name: lastName, widget: string, required: false }
       - { label: "Role Label", name: roleLabel, widget: string, required: false,
           hint: "Programme/cohort label shown in brackets, e.g. 'PhD 2022–now' or 'MSc 2025–2026'. Stored only, not auto-appended to the name." }
+      - label: "Funding (grant slugs)"
+        name: funding
+        widget: list
+        required: false
+        hint: "Grant slugs this person is linked to, e.g. '2024-epsrc-eds'. Used for future funding display."
+        field: { label: "Grant slug", name: slug, widget: string }
       - label: "Role"
         name: role
         widget: select

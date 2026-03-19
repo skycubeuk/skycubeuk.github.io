@@ -36,6 +36,7 @@ const people = defineCollection({
     firstName: z.string().optional(),
     lastName: z.string().optional(),
     roleLabel: z.string().optional(),
+    funding: z.array(z.string()).default([]),
     role: z.enum(['faculty', 'postdoc', 'student', 'collab', 'ugrad-alum', 'alum']),
     bio: z.string().optional(),
     bioLong: z.string().optional(),
