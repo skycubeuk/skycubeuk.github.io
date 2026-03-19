@@ -42,6 +42,7 @@ const people = defineCollection({
     orcid: z.string().optional(),
     github: z.string().optional(),
     linkedin: z.string().optional(),
+    bluesky: z.string().optional(),
     nextRole: z.string().optional(),
     order: z.number().default(99),
   }),

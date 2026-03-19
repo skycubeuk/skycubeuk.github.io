@@ -192,6 +192,8 @@ collections:
       - { label: "ORCID", name: orcid, widget: string, required: false }
       - { label: "GitHub Handle", name: github, widget: string, required: false }
       - { label: "LinkedIn URL", name: linkedin, widget: string, required: false }
+      - { label: "Bluesky Handle", name: bluesky, widget: string, required: false,
+          hint: "Handle without @, e.g. 'yourname.bsky.social'" }
       - { label: "After leaving (alumni)", name: nextRole, widget: string, required: false,
           hint: "e.g. '> Consultancy'" }
       - { label: "Sort order (lower = first)", name: order, widget: number, default: 99, required: false }
