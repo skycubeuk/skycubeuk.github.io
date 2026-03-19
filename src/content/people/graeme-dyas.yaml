@@ -1,7 +1,9 @@
 id: gdyas
 displayName: Graeme Dyas
-role: faculty
+role: student
 bio: IT
 bioLong: Add stuff to the website
 image: /img/people/1647529167661.jpeg
+github: skycubeuk
+bluesky: zabouth.bsky.social
 order: 99
