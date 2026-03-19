@@ -169,7 +169,14 @@ collections:
     fields:
       - { label: "ID (slug)", name: id, widget: string,
           hint: "Short unique identifier, e.g. 'ying' or 'phd2022_ananya'. Used in projects to link people." }
-      - { label: "Display Name", name: displayName, widget: string }
+      - { label: "Display Name", name: displayName, widget: string, required: false,
+          hint: "Override the full displayed name. If blank, built from Title + First Name + Last Name." }
+      - { label: "Title", name: title, widget: string, required: false,
+          hint: "Honorific, e.g. Dr, Prof" }
+      - { label: "First Name", name: firstName, widget: string, required: false }
+      - { label: "Last Name", name: lastName, widget: string, required: false }
+      - { label: "Role Label", name: roleLabel, widget: string, required: false,
+          hint: "Programme/cohort label shown in brackets, e.g. 'PhD 2022–now' or 'MSc 2025–2026'. Stored only, not auto-appended to the name." }
       - label: "Role"
         name: role
         widget: select

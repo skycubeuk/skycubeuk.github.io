@@ -1,10 +1,12 @@
 ---
+import { resolveDisplayName } from '../utils/people';
+
 interface Props {
   title: string;
   excerpt: string;
   slug: string;
   status: string;
-  people: Array<{ displayName: string; image?: string; id: string; webpage?: string }>;
+  people: Array<{ displayName?: string; title?: string; firstName?: string; lastName?: string; image?: string; id: string; webpage?: string }>;
   lastUpdated: Date;
 }
 
@@ -28,16 +30,16 @@ const { title, excerpt, slug, status, people, lastUpdated } = Astro.props;
         p.image ? (
           <img
             src={p.image}
-            alt={p.displayName}
-            title={p.displayName}
+            alt={resolveDisplayName(p)}
+            title={resolveDisplayName(p)}
             class="w-8 h-8 rounded-full ring-2 ring-white object-cover"
           />
         ) : (
           <div
-            title={p.displayName}
+            title={resolveDisplayName(p)}
             class="w-8 h-8 rounded-full ring-2 ring-white bg-[#552d62] flex items-center justify-center text-white text-xs font-bold"
           >
-            {p.displayName.charAt(0)}
+            {resolveDisplayName(p).charAt(0)}
           </div>
         )
       ))}

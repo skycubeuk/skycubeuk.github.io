@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PersonCard from '../../components/PersonCard.astro';
 import PublicationItem from '../../components/PublicationItem.astro';
+import { resolveDisplayName } from '../../utils/people';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -51,7 +52,7 @@ const projectPubs = (project.data.publications ?? [])
         <div class="flex flex-wrap gap-6">
           {projectPeople.map((p: any) => (
             <PersonCard
-              name={p.displayName}
+              name={resolveDisplayName(p)}
               role={p.role}
               bio={p.bio}
               image={p.image}

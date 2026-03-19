@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+import { resolveDisplayName } from '../utils/people';
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -96,8 +97,8 @@ for (const group of groupedFunding.values()) {
                     <span>
                       <span class="font-medium text-gray-700">PI:</span>{' '}
                       {pi.webpage
-                        ? <a href={pi.webpage} class="hover:text-[#552d62] hover:underline">{pi.displayName}</a>
-                        : pi.displayName
+                        ? <a href={pi.webpage} class="hover:text-[#552d62] hover:underline">{resolveDisplayName(pi)}</a>
+                        : resolveDisplayName(pi)
                       }
                     </span>
                   )}
@@ -108,8 +109,8 @@ for (const group of groupedFunding.values()) {
                         <>
                           {i > 0 && ', '}
                           {p.webpage
-                            ? <a href={p.webpage} class="hover:text-[#552d62] hover:underline">{p.displayName}</a>
-                            : p.displayName
+                            ? <a href={p.webpage} class="hover:text-[#552d62] hover:underline">{resolveDisplayName(p)}</a>
+                            : resolveDisplayName(p)
                           }
                         </>
                       ))}

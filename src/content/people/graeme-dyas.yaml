@@ -1,7 +1,10 @@
 id: gdyas
-displayName: Graeme Dyas
+displayName: "Graeme Dyas (MSc 2025–2026)"
+firstName: "Graeme"
+lastName: "Dyas"
+roleLabel: "MSc 2025–2026"
 role: student
-bio: IT
+bio: "Department of Physics, University of Warwick"
 bioLong: Add stuff to the website
 image: /img/people/1647529167661.jpeg
 github: skycubeuk

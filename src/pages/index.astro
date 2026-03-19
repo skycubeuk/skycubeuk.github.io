@@ -4,6 +4,7 @@ import Base from '../layouts/Base.astro';
 import NewsItem from '../components/NewsItem.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import PersonCard from '../components/PersonCard.astro';
+import { resolveDisplayName } from '../utils/people';
 
 // Load data
 const allPosts = (await getCollection('posts')).sort(
@@ -140,7 +141,7 @@ for (const grant of grantsForIndex) {
       <div class="mb-10">
         {faculty.map(p => (
           <PersonCard
-            name={p.data.displayName}
+            name={resolveDisplayName(p.data)}
             role={p.data.role}
             bio={p.data.bio}
             bioLong={p.data.bioLong}
@@ -163,7 +164,7 @@ for (const grant of grantsForIndex) {
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 items-start">
           {students.map(p => (
             <PersonCard
-              name={p.data.displayName}
+              name={resolveDisplayName(p.data)}
               role={p.data.role}
               bio={p.data.bio}
               image={p.data.image}
@@ -198,8 +199,8 @@ for (const grant of grantsForIndex) {
             {collabs.map(p => (
               <li class="text-sm">
                 {p.data.webpage
-                  ? <a href={p.data.webpage} class="font-medium text-[#552d62] hover:underline">{p.data.displayName}</a>
-                  : <span class="font-medium text-gray-800">{p.data.displayName}</span>
+                  ? <a href={p.data.webpage} class="font-medium text-[#552d62] hover:underline">{resolveDisplayName(p.data)}</a>
+                  : <span class="font-medium text-gray-800">{resolveDisplayName(p.data)}</span>
                 }
                 {p.data.bio && <span class="text-gray-500"> — {p.data.bio}</span>}
               </li>
@@ -212,8 +213,8 @@ for (const grant of grantsForIndex) {
             {alumni.map(p => (
               <li class="text-sm">
                 {p.data.webpage
-                  ? <a href={p.data.webpage} class="text-gray-700 hover:text-[#552d62]">{p.data.displayName}</a>
-                  : <span class="text-gray-700">{p.data.displayName}</span>
+                  ? <a href={p.data.webpage} class="text-gray-700 hover:text-[#552d62]">{resolveDisplayName(p.data)}</a>
+                  : <span class="text-gray-700">{resolveDisplayName(p.data)}</span>
                 }
                 {p.data.nextRole && <span class="text-gray-400"> → {p.data.nextRole}</span>}
               </li>

@@ -31,7 +31,11 @@ const people = defineCollection({
   loader: glob({ pattern: '**/*.yaml', base: './src/content/people' }),
   schema: z.object({
     id: z.string(),
-    displayName: z.string(),
+    displayName: z.string().optional(),
+    title: z.string().optional(),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    roleLabel: z.string().optional(),
     role: z.enum(['faculty', 'postdoc', 'student', 'collab', 'ugrad-alum', 'alum']),
     bio: z.string().optional(),
     bioLong: z.string().optional(),
