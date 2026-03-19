@@ -23,21 +23,26 @@ const students  = allPeople.filter(p => p.data.role === 'student');
 const collabs   = allPeople.filter(p => p.data.role === 'collab');
 const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.role));
 
-// Funding data — active grants only, grouped by funding body
+// Funding data grouped by funding body
 const today = new Date();
 today.setHours(0, 0, 0, 0);
+
+const siteSettings = (await getCollection('settings'))[0];
+const showPastFunding: boolean = siteSettings?.data.showPastFunding ?? true;
 
 const allFunding = await getCollection('funding');
 const allFundingBodies = await getCollection('fundingBody');
 const fundingBodiesById = Object.fromEntries(allFundingBodies.map(fb => [fb.data.id, fb.data]));
 
-const activeGrants = allFunding.filter(
-  g => !g.data.endDate || g.data.endDate >= today
-);
+// When showPastFunding is false, past grants look identical to active — include all.
+// When showPastFunding is true, only active grants appear on the front page.
+const grantsForIndex = showPastFunding
+  ? allFunding.filter(g => !g.data.endDate || g.data.endDate >= today)
+  : allFunding;
 
-// Group active grants by funding body, preserving encounter order
+// Group by funding body, preserving encounter order
 const fundingGroups = new Map<string, { body: typeof allFundingBodies[0]['data']; grants: typeof allFunding }>();
-for (const grant of activeGrants) {
+for (const grant of grantsForIndex) {
   const bodyId = grant.data.fundingBody;
   const body = fundingBodiesById[bodyId];
   if (!body) continue;
