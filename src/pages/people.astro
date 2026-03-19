@@ -40,7 +40,7 @@ const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.r
     <!-- Students -->
     <section class="mb-12">
       <h2 class="text-xl font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Research Students</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 items-start">
         {students.map(p => (
           <PersonCard
             name={p.data.displayName}
