@@ -1,5 +1,5 @@
 ---
-import { resolveDisplayName } from '../utils/people';
+import { resolveDisplayName, getInitial } from '../utils/people';
 
 interface Props {
   title: string;
@@ -39,7 +39,7 @@ const { title, excerpt, slug, status, people, lastUpdated } = Astro.props;
             title={resolveDisplayName(p)}
             class="w-8 h-8 rounded-full ring-2 ring-white bg-[#552d62] flex items-center justify-center text-white text-xs font-bold"
           >
-            {resolveDisplayName(p).charAt(0)}
+            {getInitial(p)}
           </div>
         )
       ))}

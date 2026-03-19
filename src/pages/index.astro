@@ -142,6 +142,7 @@ for (const grant of grantsForIndex) {
         {faculty.map(p => (
           <PersonCard
             name={resolveDisplayName(p.data)}
+            firstName={p.data.firstName}
             role={p.data.role}
             bio={p.data.bio}
             bioLong={p.data.bioLong}
@@ -165,6 +166,7 @@ for (const grant of grantsForIndex) {
           {students.map(p => (
             <PersonCard
               name={resolveDisplayName(p.data)}
+              firstName={p.data.firstName}
               role={p.data.role}
               roleLabel={p.data.roleLabel}
               bio={p.data.bio}

@@ -1,6 +1,7 @@
 ---
 interface Props {
   name: string;
+  firstName?: string;
   role: string;
   bio?: string;
   bioLong?: string;
@@ -18,11 +19,11 @@ interface Props {
 }
 
 const {
-  name, role, bio, bioLong, image, webpage, twitter, mastodon, orcid, github, linkedin, bluesky,
+  name, firstName, role, bio, bioLong, image, webpage, twitter, mastodon, orcid, github, linkedin, bluesky,
   roleLabel, nextRole, variant = 'card',
 } = Astro.props;
 
-const initial = name.charAt(0).toUpperCase();
+const initial = (firstName ?? name).charAt(0).toUpperCase();
 const roleColors: Record<string, string> = {
   faculty: 'bg-[#552d62]',
   postdoc: 'bg-purple-500',
