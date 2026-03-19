@@ -141,6 +141,12 @@ const bgColor = roleColors[role] ?? 'bg-gray-400';
           )}
         </div>
       )}
+      {bioLong && (
+        <div class="mt-1.5 w-full">
+          <p class="hidden text-xs text-gray-600 leading-snug text-left" data-bio-long>{bioLong}</p>
+          <button class="text-xs text-[#552d62] hover:underline mt-0.5" data-expand-btn aria-expanded="false">▼ More</button>
+        </div>
+      )}
     </div>
   </div>
 )}
@@ -156,3 +162,15 @@ const bgColor = roleColors[role] ?? 'bg-gray-400';
     {nextRole && <span class="text-gray-400 text-sm"> → {nextRole}</span>}
   </div>
 )}
+
+<script>
+  document.querySelectorAll('[data-expand-btn]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const bio = btn.previousElementSibling as HTMLElement;
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      bio.classList.toggle('hidden', expanded);
+      btn.setAttribute('aria-expanded', String(!expanded));
+      btn.textContent = expanded ? '▼ More' : '▲ Less';
+    });
+  });
+</script>

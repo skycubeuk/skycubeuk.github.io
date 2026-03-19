@@ -160,8 +160,11 @@ for (const grant of grantsForIndex) {
       </div>
 
       <!-- Students -->
-      <div class="mb-10">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">Research Students</h3>
+      <div class="mb-10" data-student-section>
+        <div class="flex items-end justify-between mb-4">
+          <h3 class="text-lg font-semibold text-gray-700">Research Students</h3>
+          <button class="text-xs text-[#552d62] hover:underline" data-expand-all>Expand all</button>
+        </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 items-start">
           {students.map(p => (
             <PersonCard
@@ -170,6 +173,7 @@ for (const grant of grantsForIndex) {
               role={p.data.role}
               roleLabel={p.data.roleLabel}
               bio={p.data.bio}
+              bioLong={p.data.bioLong}
               image={p.data.image}
               webpage={p.data.webpage}
               twitter={p.data.twitter}
@@ -254,3 +258,20 @@ for (const grant of grantsForIndex) {
     </section>
   )}
 </Base>
+
+<script>
+  document.querySelectorAll('[data-expand-all]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const section = btn.closest('[data-student-section]') as HTMLElement;
+      const bios = section.querySelectorAll('[data-bio-long]');
+      const cardBtns = section.querySelectorAll('[data-expand-btn]');
+      const expanding = btn.textContent?.trim() === 'Expand all';
+      bios.forEach(b => b.classList.toggle('hidden', !expanding));
+      cardBtns.forEach(b => {
+        b.setAttribute('aria-expanded', String(expanding));
+        b.textContent = expanding ? '▲ Less' : '▼ More';
+      });
+      btn.textContent = expanding ? 'Collapse all' : 'Expand all';
+    });
+  });
+</script>

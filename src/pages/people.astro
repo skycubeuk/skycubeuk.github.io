@@ -40,8 +40,11 @@ const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.r
     </section>
 
     <!-- Students -->
-    <section class="mb-12">
-      <h2 class="text-xl font-semibold text-gray-800 mb-5 pb-2 border-b border-gray-200">Research Students</h2>
+    <section class="mb-12" data-student-section>
+      <div class="flex items-end justify-between mb-5 pb-2 border-b border-gray-200">
+        <h2 class="text-xl font-semibold text-gray-800">Research Students</h2>
+        <button class="text-xs text-[#552d62] hover:underline" data-expand-all>Expand all</button>
+      </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 items-start">
         {students.map(p => (
           <PersonCard
@@ -50,6 +53,7 @@ const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.r
             role={p.data.role}
             roleLabel={p.data.roleLabel}
             bio={p.data.bio}
+            bioLong={p.data.bioLong}
             image={p.data.image}
             webpage={p.data.webpage}
             twitter={p.data.twitter}
@@ -107,3 +111,20 @@ const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.r
     </div>
   </div>
 </Base>
+
+<script>
+  document.querySelectorAll('[data-expand-all]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const section = btn.closest('[data-student-section]') as HTMLElement;
+      const bios = section.querySelectorAll('[data-bio-long]');
+      const cardBtns = section.querySelectorAll('[data-expand-btn]');
+      const expanding = btn.textContent?.trim() === 'Expand all';
+      bios.forEach(b => b.classList.toggle('hidden', !expanding));
+      cardBtns.forEach(b => {
+        b.setAttribute('aria-expanded', String(expanding));
+        b.textContent = expanding ? '▲ Less' : '▼ More';
+      });
+      btn.textContent = expanding ? 'Collapse all' : 'Expand all';
+    });
+  });
+</script>
