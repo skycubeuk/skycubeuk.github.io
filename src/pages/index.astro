@@ -22,6 +22,30 @@ const faculty   = allPeople.filter(p => p.data.role === 'faculty');
 const students  = allPeople.filter(p => p.data.role === 'student');
 const collabs   = allPeople.filter(p => p.data.role === 'collab');
 const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.role));
+
+// Funding data — active grants only, grouped by funding body
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const allFunding = await getCollection('funding');
+const allFundingBodies = await getCollection('fundingBody');
+const fundingBodiesById = Object.fromEntries(allFundingBodies.map(fb => [fb.data.id, fb.data]));
+
+const activeGrants = allFunding.filter(
+  g => !g.data.endDate || g.data.endDate >= today
+);
+
+// Group active grants by funding body, preserving encounter order
+const fundingGroups = new Map<string, { body: typeof allFundingBodies[0]['data']; grants: typeof allFunding }>();
+for (const grant of activeGrants) {
+  const bodyId = grant.data.fundingBody;
+  const body = fundingBodiesById[bodyId];
+  if (!body) continue;
+  if (!fundingGroups.has(bodyId)) {
+    fundingGroups.set(bodyId, { body, grants: [] });
+  }
+  fundingGroups.get(bodyId)!.grants.push(grant);
+}
 ---
 
 <Base>
@@ -186,4 +210,42 @@ const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.r
       </div>
     </section>
   </div>
+
+  {fundingGroups.size > 0 && (
+    <section class="bg-gray-50 border-t border-gray-200 mt-4">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-14">
+        <div class="flex items-center justify-between mb-8">
+          <h2 class="text-2xl font-bold text-gray-900">Funding</h2>
+          <a href="/funding" class="text-sm text-[#552d62] hover:underline">All funding →</a>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...fundingGroups.values()].map(({ body, grants }) => (
+            <div class="bg-white border border-gray-200 rounded-lg p-5">
+              <div class="flex items-center gap-3 mb-4">
+                {body.logo && (
+                  <img src={body.logo} alt={body.name} class="h-8 w-auto object-contain flex-shrink-0" />
+                )}
+                <h3 class="text-sm font-semibold text-gray-700 leading-tight">
+                  {body.url
+                    ? <a href={body.url} class="hover:text-[#552d62] hover:underline" target="_blank" rel="noopener noreferrer">{body.name}</a>
+                    : body.name
+                  }
+                </h3>
+              </div>
+              <ul class="space-y-2">
+                {grants.map(grant => (
+                  <li class="text-sm text-gray-700 leading-snug">
+                    <span class="font-medium">{grant.data.title}</span>
+                    {grant.data.grantCode && (
+                      <span class="text-gray-400 font-mono text-xs ml-1">({grant.data.grantCode})</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 </Base>

@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import PersonCard from '../../components/PersonCard.astro';
+import PublicationItem from '../../components/PublicationItem.astro';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -16,6 +17,14 @@ const allPeople = await getCollection('people');
 const peopleById = Object.fromEntries(allPeople.map(p => [p.data.id, p.data]));
 const projectPeople = project.data.people
   .map((id: string) => peopleById[id])
+  .filter(Boolean);
+
+const allPublications = await getCollection('publications');
+const pubsByKey = Object.fromEntries(
+  allPublications.filter(p => p.data.key).map(p => [p.data.key!, p.data])
+);
+const projectPubs = (project.data.publications ?? [])
+  .map((key: string) => pubsByKey[key])
   .filter(Boolean);
 ---
 
@@ -51,6 +60,28 @@ const projectPeople = project.data.people
             />
           ))}
         </div>
+      </div>
+    )}
+
+    {projectPubs.length > 0 && (
+      <div class="border-t border-gray-100 pt-8 mt-8">
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">Related publications</h2>
+        <ul class="divide-y divide-gray-100">
+          {projectPubs.map((pub: any) => (
+            <PublicationItem
+              title={pub.title}
+              authors={pub.authors}
+              journal={pub.journal}
+              year={pub.year}
+              doi={pub.doi}
+              url={pub.url}
+              abstract={pub.abstract}
+              isCover={pub.isCover}
+              coverImage={pub.coverImage}
+              coverThumb={pub.coverThumb}
+            />
+          ))}
+        </ul>
       </div>
     )}
 

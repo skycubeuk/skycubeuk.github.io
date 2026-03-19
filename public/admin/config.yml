@@ -28,6 +28,8 @@ collections:
           - { label: "Twitter Handle", name: twitter, widget: string }
           - { label: "GitHub Handle", name: github, widget: string }
           - { label: "ORCID", name: orcid, widget: string, required: false }
+          - { label: "Show past funding greyed out?", name: showPastFunding, widget: boolean, default: true,
+              hint: "If enabled, past grants (after end date) appear greyed on the Funding page. If disabled, all grants look the same." }
 
   # ── POSTS (NEWS) ──────────────────────────────────────
   - name: posts
@@ -93,6 +95,65 @@ collections:
         widget: list
         field: { label: "Person ID", name: id, widget: string,
                   hint: "Use the person's ID from the People collection, e.g. 'ying' or 'phd2022_ananya'" }
+      - label: "Publications (citation keys)"
+        name: publications
+        widget: list
+        required: false
+        field: { label: "Citation Key", name: key, widget: string,
+                  hint: "Use the citation key from the Publications collection, e.g. 'Chow2014'" }
+
+  # ── FUNDING BODIES ────────────────────────────────────
+  - name: funding-body
+    label: "Funding Bodies"
+    label_singular: "Funding Body"
+    folder: src/content/funding-body
+    create: true
+    extension: yaml
+    format: yaml
+    identifier_field: id
+    summary: "{{name}}"
+    media_folder: /public/img/funding
+    public_folder: /img/funding
+    fields:
+      - { label: "ID (slug)", name: id, widget: string,
+          hint: "Short unique identifier, e.g. 'epsrc' or 'wellcome'. Used in grants to link the funding body." }
+      - { label: "Name", name: name, widget: string }
+      - { label: "Logo", name: logo, widget: image, required: false }
+      - { label: "Website URL", name: url, widget: string, required: false }
+
+  # ── FUNDING (GRANTS) ──────────────────────────────────
+  - name: funding
+    label: "Funding"
+    label_singular: "Grant"
+    folder: src/content/funding
+    create: true
+    extension: md
+    slug: "{{year}}-{{fields.grantCode | slugify}}"
+    summary: "{{title}}"
+    fields:
+      - { label: "Grant Title", name: title, widget: string }
+      - { label: "Grant Code / Reference", name: grantCode, widget: string, required: false,
+          hint: "e.g. EP/X000000/1" }
+      - label: "Funding Body"
+        name: fundingBody
+        widget: relation
+        collection: funding-body
+        search_fields: ["name", "id"]
+        value_field: id
+        display_fields: ["name"]
+        hint: "Select the funding organisation"
+      - { label: "Start Date", name: startDate, widget: datetime, format: "YYYY-MM-DD", date_format: "DD MMMM YYYY", time_format: false }
+      - { label: "End Date", name: endDate, widget: datetime, format: "YYYY-MM-DD", date_format: "DD MMMM YYYY", time_format: false, required: false,
+          hint: "Leave blank for ongoing grants. Past this date, the grant is shown as inactive." }
+      - { label: "PI (person ID)", name: pi, widget: string,
+          hint: "Use the person's ID from the People collection, e.g. 'ying'" }
+      - label: "Co-Investigators (person IDs)"
+        name: coi
+        widget: list
+        required: false
+        field: { label: "Person ID", name: id, widget: string,
+                  hint: "Use the person's ID from the People collection" }
+      - { label: "Body", name: body, widget: markdown, required: false }
 
   # ── PEOPLE ────────────────────────────────────────────
   - name: people

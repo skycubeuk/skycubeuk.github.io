@@ -23,6 +23,7 @@ const projects = defineCollection({
     date: z.coerce.date(),
     lastUpdated: z.coerce.date(),
     people: z.array(z.string()).default([]),
+    publications: z.array(z.string()).default([]),
   }),
 });
 
@@ -74,7 +75,31 @@ const settings = defineCollection({
     twitter: z.string().optional(),
     github: z.string().optional(),
     orcid: z.string().optional(),
+    showPastFunding: z.boolean().default(true),
   }),
 });
 
-export const collections = { posts, projects, people, publications, settings };
+const fundingBody = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: './src/content/funding-body' }),
+  schema: z.object({
+    id: z.string(),
+    name: z.string(),
+    logo: z.string().optional(),
+    url: z.string().optional(),
+  }),
+});
+
+const funding = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/funding' }),
+  schema: z.object({
+    title: z.string(),
+    grantCode: z.string().optional(),
+    fundingBody: z.string(),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date().optional(),
+    pi: z.string(),
+    coi: z.array(z.string()).default([]),
+  }),
+});
+
+export const collections = { posts, projects, people, publications, settings, fundingBody, funding };

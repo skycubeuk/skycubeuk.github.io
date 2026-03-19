@@ -1,0 +1,135 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const today = new Date();
+today.setHours(0, 0, 0, 0);
+
+const allFunding = await getCollection('funding');
+const allFundingBodies = await getCollection('fundingBody');
+const siteSettings = (await getCollection('settings'))[0];
+const showPastFunding: boolean = siteSettings?.data.showPastFunding ?? true;
+
+const allPeople = await getCollection('people');
+const peopleById = Object.fromEntries(allPeople.map(p => [p.data.id, p.data]));
+
+const fundingBodiesById = Object.fromEntries(
+  allFundingBodies.map(fb => [fb.data.id, fb.data])
+);
+
+function isActive(grant: (typeof allFunding)[0]): boolean {
+  return !grant.data.endDate || grant.data.endDate >= today;
+}
+
+// Group grants by funding body
+const groupedFunding = new Map<string, { body: typeof allFundingBodies[0]['data']; grants: typeof allFunding }>();
+for (const grant of allFunding) {
+  const bodyId = grant.data.fundingBody;
+  const body = fundingBodiesById[bodyId];
+  if (!body) continue;
+  if (!groupedFunding.has(bodyId)) {
+    groupedFunding.set(bodyId, { body, grants: [] });
+  }
+  groupedFunding.get(bodyId)!.grants.push(grant);
+}
+
+// Within each group: active first, then inactive; both sorted by startDate desc
+for (const group of groupedFunding.values()) {
+  group.grants.sort((a, b) => {
+    const aActive = isActive(a) ? 1 : 0;
+    const bActive = isActive(b) ? 1 : 0;
+    if (aActive !== bActive) return bActive - aActive;
+    return b.data.startDate.getTime() - a.data.startDate.getTime();
+  });
+}
+---
+
+<Base title="Funding">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-12">
+    <h1 class="text-3xl font-bold text-gray-900 mb-2">Funding</h1>
+    <p class="text-gray-500 mb-10">Research funding supporting the WY Chow Lab.</p>
+
+    {groupedFunding.size === 0 && (
+      <p class="text-gray-400">No funding information available.</p>
+    )}
+
+    {[...groupedFunding.values()].map(({ body, grants }) => (
+      <section class="mb-12">
+        <!-- Funding body header -->
+        <div class="flex items-center gap-4 mb-5">
+          {body.logo && (
+            <img src={body.logo} alt={body.name} class="h-10 w-auto object-contain" />
+          )}
+          <h2 class="text-xl font-semibold text-gray-800">
+            {body.url
+              ? <a href={body.url} class="hover:text-[#552d62] hover:underline" target="_blank" rel="noopener noreferrer">{body.name}</a>
+              : body.name
+            }
+          </h2>
+        </div>
+
+        <div class="space-y-4">
+          {grants.map(grant => {
+            const active = isActive(grant);
+            const pi = peopleById[grant.data.pi];
+            const coIs = grant.data.coi.map((id: string) => peopleById[id]).filter(Boolean);
+            const isPast = !active;
+            const cardClass = isPast && showPastFunding
+              ? 'border border-gray-200 rounded-lg p-4 bg-gray-50 opacity-60'
+              : 'border border-gray-200 rounded-lg p-4 bg-white';
+            return (
+              <div class={cardClass}>
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <h3 class="font-semibold text-gray-900 leading-snug">{grant.data.title}</h3>
+                    {grant.data.grantCode && (
+                      <p class="text-sm text-gray-500 mt-0.5 font-mono">{grant.data.grantCode}</p>
+                    )}
+                  </div>
+                  {isPast && (
+                    <span class="flex-shrink-0 text-xs font-medium text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full mt-0.5">Past</span>
+                  )}
+                </div>
+
+                <div class="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-gray-600">
+                  {pi && (
+                    <span>
+                      <span class="font-medium text-gray-700">PI:</span>{' '}
+                      {pi.webpage
+                        ? <a href={pi.webpage} class="hover:text-[#552d62] hover:underline">{pi.displayName}</a>
+                        : pi.displayName
+                      }
+                    </span>
+                  )}
+                  {coIs.length > 0 && (
+                    <span>
+                      <span class="font-medium text-gray-700">Co-I:</span>{' '}
+                      {coIs.map((p: any, i: number) => (
+                        <>
+                          {i > 0 && ', '}
+                          {p.webpage
+                            ? <a href={p.webpage} class="hover:text-[#552d62] hover:underline">{p.displayName}</a>
+                            : p.displayName
+                          }
+                        </>
+                      ))}
+                    </span>
+                  )}
+                  <span>
+                    <span class="font-medium text-gray-700">Period:</span>{' '}
+                    {grant.data.startDate.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })}
+                    {' – '}
+                    {grant.data.endDate
+                      ? grant.data.endDate.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' })
+                      : 'ongoing'
+                    }
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+    ))}
+  </div>
+</Base>
