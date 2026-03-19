@@ -163,7 +163,8 @@ collections:
     create: true
     extension: yaml
     format: yaml
-    identifier_field: displayName
+    identifier_field: id
+    summary: "{{firstName}} {{lastName}} ({{id}})"
     media_folder: /public/img/people
     public_folder: /img/people
     fields:
