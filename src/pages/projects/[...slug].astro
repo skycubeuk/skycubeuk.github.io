@@ -53,6 +53,7 @@ const projectPubs = (project.data.publications ?? [])
           {projectPeople.map((p: any) => (
             <PersonCard
               name={resolveDisplayName(p)}
+              firstName={p.firstName}
               role={p.role}
               bio={p.bio}
               image={p.image}
