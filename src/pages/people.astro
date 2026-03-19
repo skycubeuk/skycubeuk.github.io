@@ -137,19 +137,21 @@ const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.r
         </ul>
       </section>
 
-      <section class="sm:flex sm:flex-col sm:items-end">
-        <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Alumni</h2>
-        <ul class="space-y-1.5">
-          {alumni.map(p => (
-            <li class="text-sm">
-              {p.data.webpage
-                ? <a href={p.data.webpage} class="text-gray-700 hover:text-[#552d62]">{resolveDisplayName(p.data)}</a>
-                : <span class="text-gray-700">{resolveDisplayName(p.data)}</span>
-              }
-              {p.data.nextRole && <span class="text-gray-400"> → {p.data.nextRole}</span>}
-            </li>
-          ))}
-        </ul>
+      <section class="sm:flex sm:justify-end">
+        <div>
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b border-gray-200">Alumni</h2>
+          <ul class="space-y-1.5">
+            {alumni.map(p => (
+              <li class="text-sm">
+                {p.data.webpage
+                  ? <a href={p.data.webpage} class="text-gray-700 hover:text-[#552d62]">{resolveDisplayName(p.data)}</a>
+                  : <span class="text-gray-700">{resolveDisplayName(p.data)}</span>
+                }
+                {p.data.nextRole && <span class="text-gray-400"> → {p.data.nextRole}</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
       </section>
     </div>
   </div>
