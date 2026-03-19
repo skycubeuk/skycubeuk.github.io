@@ -46,6 +46,7 @@ const alumni    = allPeople.filter(p => ['alum', 'ugrad-alum'].includes(p.data.r
           <PersonCard
             name={resolveDisplayName(p.data)}
             role={p.data.role}
+            roleLabel={p.data.roleLabel}
             bio={p.data.bio}
             image={p.data.image}
             webpage={p.data.webpage}

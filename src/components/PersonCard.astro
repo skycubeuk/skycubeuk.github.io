@@ -12,13 +12,14 @@ interface Props {
   github?: string;
   linkedin?: string;
   bluesky?: string;
+  roleLabel?: string;
   nextRole?: string;
   variant?: 'full' | 'card' | 'mini';
 }
 
 const {
   name, role, bio, bioLong, image, webpage, twitter, mastodon, orcid, github, linkedin, bluesky,
-  nextRole, variant = 'card',
+  roleLabel, nextRole, variant = 'card',
 } = Astro.props;
 
 const initial = name.charAt(0).toUpperCase();
@@ -103,6 +104,7 @@ const bgColor = roleColors[role] ?? 'bg-gray-400';
       <p class="text-sm font-medium text-gray-900 leading-snug">
         {webpage ? <a href={webpage} class="hover:text-[#552d62] transition-colors">{name}</a> : name}
       </p>
+      {roleLabel && <p class="text-sm font-medium text-gray-900 leading-snug">({roleLabel})</p>}
       {bio && <p class="text-xs text-gray-500 mt-0.5 leading-snug line-clamp-2">{bio}</p>}
       {(orcid || twitter || mastodon || bluesky || github || linkedin) && (
         <div class="flex items-center justify-center gap-2 mt-1.5">
