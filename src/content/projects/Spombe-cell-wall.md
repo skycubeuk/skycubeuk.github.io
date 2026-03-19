@@ -1,6 +1,8 @@
 ---
-title: "Cell wall of fission yeast"
-excerpt: "Fission yeast is a key model organism in fungal and cell cycle research. ssNMR provides a means to quantify changes in cell wall composition upon novel and specific genetic manipulations."
+title: Cell wall of fission yeast
+excerpt: Fission yeast is a key model organism in fungal and cell cycle
+  research. ssNMR provides a means to quantify changes in cell wall composition
+  upon novel and specific genetic manipulations.
 status: active
 date: 2022-03-22
 lastUpdated: 2023-08-03
@@ -8,6 +10,8 @@ people:
   - ying
   - mbalasubramanian
   - phd2022_ananya
+publications:
+  - Chow2011
 ---
 
 *Schizosaccharomyces pombe* (fission yeast) is a well-established model organism in cell biology, particularly for studying the cell cycle and fungal biology. Its cell wall is a complex, highly organised structure composed primarily of β-glucans, α-glucans, and galactomannans.
